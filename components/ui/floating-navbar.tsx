@@ -1,28 +1,24 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import {
     motion,
     AnimatePresence,
 } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useTheme } from 'next-themes'
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
 import { CiLinkedin } from "react-icons/ci";
 import PulseEffect from "./PulseEffect";
 import Image from "next/image";
 import ModeSwitch from "@/components/ModeSwitch";
-
 export const FloatingNav = ({
     className,
 }: {
 
     className?: string;
 }) => {
-    const [visible, setVisible] = useState(true);
-    const [itsZero, setitsZero] = useState(false);
-
-
+    const visible = true;
+    const itsZero = false;
     return (
         <AnimatePresence mode="wait">
             <motion.div
@@ -55,8 +51,6 @@ export const FloatingNav = ({
                     </PulseEffect>
                 </Link>
                 <div className="invisible-space w-6/12"></div>
-
-
                 <ModeSwitch />
                 <a
                     href="https://github.com/bryanBayocaG"
