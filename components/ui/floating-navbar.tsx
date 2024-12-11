@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
 import { CiLinkedin } from "react-icons/ci";
-import PulseEffect from "./PulseEffect";
 import Image from "next/image";
 import ModeSwitch from "@/components/ModeSwitch";
 export const FloatingNav = ({
@@ -39,16 +38,14 @@ export const FloatingNav = ({
                 )}
             >
                 <Link href="/" className={cn("w-6/12 items-center flex")}>
-                    <PulseEffect>
-                        <Image
-                            width={28}
-                            height={0}
-                            unoptimized
-                            className=" w-28"
-                            src="/BryanLogo.png"
-                            alt="Logo"
-                        />
-                    </PulseEffect>
+                    <Image
+                        width={28}
+                        height={0}
+                        unoptimized
+                        className=" w-28"
+                        src="/BryanLogo.png"
+                        alt="Logo"
+                    />
                 </Link>
                 <div className="invisible-space w-6/12"></div>
                 <ModeSwitch />
