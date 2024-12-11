@@ -1,3 +1,5 @@
+
+
 export const tabsData = [
     {
         title: "Search",
@@ -5,6 +7,7 @@ export const tabsData = [
         content: (
             <div>
                 <p>Search Tab</p>
+
 
             </div>
         ),
