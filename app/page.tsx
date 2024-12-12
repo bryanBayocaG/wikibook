@@ -1,6 +1,10 @@
+
 import { Tabs } from "@/components/ui/tabs";
 import { FloatingNav } from "@/components/ui/floating-navbar";
 import { tabsData } from "@/data";
+
+
+
 export default function Home() {
 
 
@@ -9,6 +13,7 @@ export default function Home() {
       <div className="w-full">
         <FloatingNav />
         <div className="h-40" />
+
         <div className="h-screen relative [perspective:1000px] flex flex-col w-full mx-auto items-start justify-start ">
           <Tabs tabs={tabsData} />
         </div>

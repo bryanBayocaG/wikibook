@@ -49,6 +49,7 @@ export const FloatingNav = ({
                 </Link>
                 <div className="invisible-space w-6/12"></div>
                 <ModeSwitch />
+                <a href="/newpage">New page</a>
                 <a
                     href="https://github.com/bryanBayocaG"
                     rel="noopener noreferrer"

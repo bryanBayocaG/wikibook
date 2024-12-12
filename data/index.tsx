@@ -1,14 +1,13 @@
-
-
+import AutoComplete from "@/components/AutoComplete";
+import TableFinalForm from "@/components/Table";
 export const tabsData = [
     {
         title: "Search",
         value: "search",
         content: (
             <div>
-                <p>Search Tab</p>
 
-
+                <AutoComplete />
             </div>
         ),
     },
@@ -17,8 +16,7 @@ export const tabsData = [
         value: "mylibrary",
         content: (
             <div>
-                <p>Library tab</p>
-
+                <TableFinalForm />
             </div>
         ),
     },

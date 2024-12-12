@@ -114,7 +114,7 @@ export const FadeInDiv = ({
                     animate={{
                         y: isActive(tab) ? [0, 40, 0] : 0,
                     }}
-                    className={cn("w-full h-full overflow-hidden rounded-2xl font-bold text-xl md:text-4xl p-10 top-0 left-0 bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100", className)}
+                    className={cn("w-full h-screen overflow-hidden rounded-2xl font-bold text-xl md:text-4xl p-10 top-0 left-0 bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100", className)}
                 >
                     {tab.content}
                 </motion.div>
