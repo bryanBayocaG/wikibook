@@ -14,7 +14,6 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
-    SelectItem,
 } from "@nextui-org/react";
 import db from "@/utils/firebase";
 import { collection, getDocs } from "@firebase/firestore";
@@ -48,7 +47,7 @@ export function capitalize(s) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
 
-export const PlusIcon = ({ size = 24, width, height, ...props }) => {
+export const PlusIcon = ({ size = 24, width, height, ...props }: { size: number, width: number, height: number }) => {
     return (
         <svg
             aria-hidden="true"
@@ -74,7 +73,7 @@ export const PlusIcon = ({ size = 24, width, height, ...props }) => {
     );
 };
 
-export const VerticalDotsIcon = ({ size = 24, width, height, ...props }) => {
+export const VerticalDotsIcon = ({ size = 24, width, height, ...props }: { size: number, width: number, height: number }) => {
     return (
         <svg
             aria-hidden="true"
@@ -94,7 +93,7 @@ export const VerticalDotsIcon = ({ size = 24, width, height, ...props }) => {
     );
 };
 
-export const SearchIcon = (props) => {
+export const SearchIcon = (props: { props: string }) => {
     return (
         <svg
             aria-hidden="true"
@@ -178,7 +177,8 @@ export default function App() {
     const hasSearchFilter = Boolean(filterValue);
 
     const headerColumns = React.useMemo(() => {
-        if (visibleColumns === "all") return columns;
+        // if (visibleColumns === "all") return columns;
+        if (visibleColumns.size === columns.length) return columns;
 
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
@@ -277,7 +277,7 @@ export default function App() {
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Search by name..."
+                        placeholder="Search by word..."
                         startContent={<SearchIcon />}
                         value={filterValue}
                         onClear={() => onClear()}
