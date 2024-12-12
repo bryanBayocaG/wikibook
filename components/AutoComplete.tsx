@@ -30,7 +30,7 @@ export const animals = [
 
 export default function AutoComplete() {
     return (
-        <div className="relative  flex">
+        <div className="relative p-1 flex">
             <Autocomplete
                 allowsCustomValue
                 className="w-full"

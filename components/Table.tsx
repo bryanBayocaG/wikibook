@@ -1,5 +1,5 @@
 "use client"
-import React, { SVGProps } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Table,
     TableHeader,
@@ -13,23 +13,42 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Chip,
-    User,
     Pagination,
-    Selection,
-    ChipProps,
-    SortDescriptor,
+    SelectItem,
 } from "@nextui-org/react";
+import db from "@/utils/firebase";
+import { collection, getDocs } from "@firebase/firestore";
 
-export type IconSvgProps = SVGProps<SVGSVGElement> & {
-    size?: number;
-};
+export const columns = [
+    { name: "ID", uid: "id", sortable: true },
+    { name: "WORD", uid: "word", sortable: true },
+    { name: "DESCRIPTION", uid: "definition" },
+    { name: "ACTIONS", uid: "actions" },
 
-export function capitalize(s: string) {
+];
+
+// export const words = [
+//     {
+//         id: 1,
+//         word: "Tony Reichert",
+//         definition: "Ironman hehe",
+//         team: "Testing",
+
+
+//     },
+//     {
+//         id: 2,
+//         word: "Zoey Lang",
+//         definition: "Edi wow",
+//         team: "Analysis",
+//     },
+// ];
+
+export function capitalize(s) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
 
-export const PlusIcon = ({ size = 24, width, height, ...props }: IconSvgProps) => {
+export const PlusIcon = ({ size = 24, width, height, ...props }) => {
     return (
         <svg
             aria-hidden="true"
@@ -55,7 +74,7 @@ export const PlusIcon = ({ size = 24, width, height, ...props }: IconSvgProps) =
     );
 };
 
-export const VerticalDotsIcon = ({ size = 24, width, height, ...props }: IconSvgProps) => {
+export const VerticalDotsIcon = ({ size = 24, width, height, ...props }) => {
     return (
         <svg
             aria-hidden="true"
@@ -75,7 +94,7 @@ export const VerticalDotsIcon = ({ size = 24, width, height, ...props }: IconSvg
     );
 };
 
-export const SearchIcon = (props: IconSvgProps) => {
+export const SearchIcon = (props) => {
     return (
         <svg
             aria-hidden="true"
@@ -105,7 +124,7 @@ export const SearchIcon = (props: IconSvgProps) => {
     );
 };
 
-export const ChevronDownIcon = ({ strokeWidth = 1.5, ...otherProps }: IconSvgProps) => {
+export const ChevronDownIcon = ({ strokeWidth = 1.5, ...otherProps }) => {
     return (
         <svg
             aria-hidden="true"
@@ -129,89 +148,31 @@ export const ChevronDownIcon = ({ strokeWidth = 1.5, ...otherProps }: IconSvgPro
     );
 };
 
-export const columns = [
-    { name: "ID", uid: "id", sortable: true },
-    { name: "NAME", uid: "name", sortable: true },
-    { name: "AGE", uid: "age", sortable: true },
-    { name: "ROLE", uid: "role", sortable: true },
-    { name: "TEAM", uid: "team" },
-    { name: "EMAIL", uid: "email" },
-    { name: "STATUS", uid: "status", sortable: true },
-    { name: "ACTIONS", uid: "actions" },
-];
 
-export const statusOptions = [
-    { name: "Active", uid: "active" },
-    { name: "Paused", uid: "paused" },
-    { name: "Vacation", uid: "vacation" },
-];
 
-export const users = [
-    {
-        id: 1,
-        name: "Tony Reichert",
-        role: "CEO",
-        team: "Management",
-        status: "active",
-        age: "29",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-        email: "tony.reichert@example.com",
-    },
-    {
-        id: 2,
-        name: "Zoey Lang",
-        role: "Tech Lead",
-        team: "Development",
-        status: "paused",
-        age: "25",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-        email: "zoey.lang@example.com",
-    },
-    {
-        id: 3,
-        name: "Jane Fisher",
-        role: "Sr. Dev",
-        team: "Development",
-        status: "active",
-        age: "22",
-        avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-        email: "jane.fisher@example.com",
-    },
-    {
-        id: 4,
-        name: "William Howard",
-        role: "C.M.",
-        team: "Marketing",
-        status: "vacation",
-        age: "28",
-        avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d",
-        email: "william.howard@example.com",
-    },
-];
+const INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"];
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-    active: "success",
-    paused: "danger",
-    vacation: "warning",
-};
-
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
-
-type User = (typeof users)[0];
-
-export default function TableFinalForm() {
+export default function App() {
+    const [words, setWords2] = useState<{ id: string;[key: string]: any }[]>([])
+    useEffect(() => {
+        const fetchWords = async () => {
+            const querySnapShot = await getDocs(collection(db, 'Definitions'))
+            setWords2(
+                querySnapShot.docs.map((doc) => (
+                    { ...doc.data(), id: doc.id }
+                ))
+            )
+        }
+        fetchWords()
+    }, [])
     const [filterValue, setFilterValue] = React.useState("");
-    const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
-    const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-        new Set(INITIAL_VISIBLE_COLUMNS),
-    );
-    const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
+    const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+    const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
+    const [sortDescriptor, setSortDescriptor] = React.useState({
         column: "age",
         direction: "ascending",
     });
-
     const [page, setPage] = React.useState(1);
 
     const hasSearchFilter = Boolean(filterValue);
@@ -223,21 +184,15 @@ export default function TableFinalForm() {
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredUsers = [...users];
+        let filteredWords = [...words];
 
         if (hasSearchFilter) {
-            filteredUsers = filteredUsers.filter((user) =>
-                user.name.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredWords = filteredWords.filter((words) =>
+                words.word.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
-        if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-            filteredUsers = filteredUsers.filter((user) =>
-                Array.from(statusFilter).includes(user.status),
-            );
-        }
-
-        return filteredUsers;
-    }, [users, filterValue, statusFilter]);
+        return filteredWords;
+    }, [words, filterValue]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -249,42 +204,19 @@ export default function TableFinalForm() {
     }, [page, filteredItems, rowsPerPage]);
 
     const sortedItems = React.useMemo(() => {
-        return [...items].sort((a: User, b: User) => {
-            const first = a[sortDescriptor.column as keyof User] as number;
-            const second = b[sortDescriptor.column as keyof User] as number;
+        return [...items].sort((a, b) => {
+            const first = a[sortDescriptor.column];
+            const second = b[sortDescriptor.column];
             const cmp = first < second ? -1 : first > second ? 1 : 0;
 
             return sortDescriptor.direction === "descending" ? -cmp : cmp;
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-        const cellValue = user[columnKey as keyof User];
+    const renderCell = React.useCallback((word, columnKey) => {
+        const cellValue = word[columnKey];
 
         switch (columnKey) {
-            case "name":
-                return (
-                    <User
-                        avatarProps={{ radius: "lg", src: user.avatar }}
-                        description={user.email}
-                        name={cellValue}
-                    >
-                        {user.email}
-                    </User>
-                );
-            case "role":
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{cellValue}</p>
-                        <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
-                    </div>
-                );
-            case "status":
-                return (
-                    <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-                        {cellValue}
-                    </Chip>
-                );
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
@@ -319,12 +251,12 @@ export default function TableFinalForm() {
         }
     }, [page]);
 
-    const onRowsPerPageChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    const onRowsPerPageChange = React.useCallback((e) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
     }, []);
 
-    const onSearchChange = React.useCallback((value?: string) => {
+    const onSearchChange = React.useCallback((value) => {
         if (value) {
             setFilterValue(value);
             setPage(1);
@@ -355,27 +287,6 @@ export default function TableFinalForm() {
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                                    Status
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                {statusOptions.map((status) => (
-                                    <DropdownItem key={status.uid} className="capitalize">
-                                        {capitalize(status.name)}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
                                     Columns
                                 </Button>
                             </DropdownTrigger>
@@ -400,7 +311,7 @@ export default function TableFinalForm() {
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {users.length} users</span>
+                    <span className="text-default-400 text-small">Total {words.length} words</span>
                     <label className="flex items-center text-default-400 text-small">
                         Rows per page:
                         <select
@@ -417,11 +328,10 @@ export default function TableFinalForm() {
         );
     }, [
         filterValue,
-        statusFilter,
         visibleColumns,
-        onSearchChange,
         onRowsPerPageChange,
-        users.length,
+        words.length,
+        onSearchChange,
         hasSearchFilter,
     ]);
 
@@ -482,7 +392,7 @@ export default function TableFinalForm() {
                     </TableColumn>
                 )}
             </TableHeader>
-            <TableBody emptyContent={"No users found"} items={sortedItems}>
+            <TableBody emptyContent={"No words found"} items={sortedItems}>
                 {(item) => (
                     <TableRow key={item.id}>
                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
@@ -492,3 +402,4 @@ export default function TableFinalForm() {
         </Table>
     );
 }
+
