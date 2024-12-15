@@ -6,11 +6,9 @@ import {
 } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { FaGithub } from "react-icons/fa";
-import { CiLinkedin } from "react-icons/ci";
 import Image from "next/image";
-// import ModeSwitch from "@/components/ModeSwitch";
 import dynamic from "next/dynamic";
+import UserIcon from "../UserIcon";
 
 const ModeSwitchNoSSR = dynamic(
     () => import('@/components/ModeSwitch'),
@@ -55,8 +53,7 @@ export const FloatingNav = ({
                 </Link>
                 <div className="invisible-space w-6/12"></div>
                 <ModeSwitchNoSSR />
-                <a href="/my_library">Lib</a>
-                <a
+                {/* <a
                     href="https://github.com/bryanBayocaG"
                     rel="noopener noreferrer"
                     target="_blank"
@@ -81,7 +78,8 @@ export const FloatingNav = ({
                     <span className="hidden md:block text-sm !cursor-pointer">
                         Linkedin
                     </span>
-                </a>
+                </a> */}
+                <UserIcon />
             </motion.div>
         </AnimatePresence>
     );
