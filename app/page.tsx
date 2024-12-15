@@ -1,8 +1,8 @@
 
-// import { Tabs } from "@/components/ui/tabs";
+import { Tabs } from "@/components/ui/tabs";
 import { FloatingNav } from "@/components/ui/floating-navbar";
-// import { tabsData } from "@/data";
-import AutoComplete from "@/components/AutoComplete";
+import { tabsData } from "@/data";
+// import AutoComplete from "@/components/AutoComplete";
 
 
 
@@ -16,11 +16,11 @@ export default function Home() {
       <div className="w-full">
         <FloatingNav />
         <div className="h-40" />
-        <AutoComplete />
+        {/* <AutoComplete /> */}
 
-        {/* <div className="h-screen relative [perspective:1000px] flex flex-col w-full mx-auto items-start justify-start ">
+        <div className="h-screen relative [perspective:1000px] flex flex-col w-full mx-auto items-start justify-start ">
           <Tabs tabs={tabsData} />
-        </div> */}
+        </div>
       </div>
 
     </main>
