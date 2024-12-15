@@ -9,7 +9,13 @@ import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
 import { CiLinkedin } from "react-icons/ci";
 import Image from "next/image";
-import ModeSwitch from "@/components/ModeSwitch";
+// import ModeSwitch from "@/components/ModeSwitch";
+import dynamic from "next/dynamic";
+
+const ModeSwitchNoSSR = dynamic(
+    () => import('@/components/ModeSwitch'),
+    { ssr: false }
+)
 export const FloatingNav = ({
     className,
 }: {
@@ -48,7 +54,7 @@ export const FloatingNav = ({
                     />
                 </Link>
                 <div className="invisible-space w-6/12"></div>
-                <ModeSwitch />
+                <ModeSwitchNoSSR />
                 <a
                     href="https://github.com/bryanBayocaG"
                     rel="noopener noreferrer"
