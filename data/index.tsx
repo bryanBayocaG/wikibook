@@ -1,5 +1,6 @@
+"use client"
 import AutoComplete from "@/components/AutoComplete";
-import TableFinalForm from "@/components/Table";
+// import TableFinalForm from "@/components/Table";
 import dynamic from 'next/dynamic';
 const TableFinalFormNoSSR = dynamic(() => import('@/components/Table'), { ssr: false });
 export const tabsData = [
