@@ -20,6 +20,7 @@ import {
     ChipProps,
     SortDescriptor,
 } from "@nextui-org/react";
+import ModalButton from "./ui/Modal";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;
@@ -554,9 +555,10 @@ export default function TableFinalForm() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="primary" endContent={<PlusIcon />}>
+                        {/* <Button color="primary" endContent={<PlusIcon />}>
                             Add New
-                        </Button>
+                        </Button> */}
+                        <ModalButton />
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
