@@ -31,7 +31,11 @@ export default function UserIcon() {
                                 src: `${auth.currentUser?.photoURL}`,
                             }}
                             className="hidden md:flex transition-transform"
-                            description={auth.currentUser?.email}
+                            description={
+                                <div className="truncate w-28">
+                                    {auth.currentUser?.email}
+                                </div>
+                            }
                             name={auth.currentUser?.displayName}
                         />
                         <Avatar

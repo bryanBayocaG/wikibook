@@ -14,13 +14,13 @@ import { PlusIcon } from "../Table";
 import { useTheme } from 'next-themes'
 import { SignupForm } from "../SignUp";
 import { CiUser } from "react-icons/ci";
+import notify from "./Alert"
 
 
 
 interface Props {
     name: string;
 }
-
 
 export default function ModalButton({ name }: Props) {
     const { theme } = useTheme();
@@ -40,8 +40,13 @@ export default function ModalButton({ name }: Props) {
         onOpen();
     };
 
+    const handleAdd = () => {
+        notify()
+    };
+
     return (
         <>
+
             <div className="flex flex-wrap gap-3">
 
                 <Button
@@ -54,6 +59,7 @@ export default function ModalButton({ name }: Props) {
                 >
                     {name}
                 </Button>
+
 
             </div>
             <Modal backdrop="blur" isOpen={isOpen} size="5xl" onClose={onClose}>
@@ -82,7 +88,7 @@ export default function ModalButton({ name }: Props) {
                                     <Button color="danger" variant="light" onPress={onClose}>
                                         Close
                                     </Button>
-                                    <Button color="primary" onPress={onClose}>
+                                    <Button color="primary" onPress={handleAdd}>
                                         Add the word
                                     </Button>
                                 </ModalFooter>
