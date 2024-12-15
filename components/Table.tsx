@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { /* useEffect, */ useState } from "react";
 import {
     Table,
     TableHeader,
@@ -15,8 +15,8 @@ import {
     DropdownItem,
     Pagination,
 } from "@nextui-org/react";
-import db from "@/utils/firebase";
-import { collection, getDocs } from "@firebase/firestore";
+/* import db from "@/utils/firebase";
+import { collection, getDocs } from "@firebase/firestore"; */
 import ModalButton from "./ui/Modal";
 
 export const columns = [
@@ -26,6 +26,12 @@ export const columns = [
     { name: "ACTIONS", uid: "actions" },
 
 ];
+type WordEntry = {
+    id: number;
+    word: string;
+    definition: string;
+    // Add any other properties that a word entry might have
+};
 
 // export const words = [
 //     {
@@ -44,7 +50,7 @@ export const columns = [
 //     },
 // ];
 
-export function capitalize(s) {
+export function capitalize(s: string) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
 
@@ -153,7 +159,7 @@ export const ChevronDownIcon = ({ strokeWidth = 1.5, ...otherProps }) => {
 const INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"];
 
 export default function App() {
-    const [words, setWords2] = useState<{ id: string;[key: string]: any }[]>([])
+    const [words/* , setWords */] = useState<WordEntry[]>([])
     // useEffect(() => {
     //     const fetchWords = async () => {
     //         const querySnapShot = await getDocs(collection(db, 'Definitions'))
@@ -188,12 +194,12 @@ export default function App() {
         let filteredWords = [...words];
 
         if (hasSearchFilter) {
-            filteredWords = filteredWords.filter((words) =>
-                words.word.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredWords = filteredWords.filter((word) =>
+                word.word.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
         return filteredWords;
-    }, [words, filterValue]);
+    }, [words, filterValue, hasSearchFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -214,8 +220,8 @@ export default function App() {
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = React.useCallback((word, columnKey) => {
-        const cellValue = word[columnKey];
+    const renderCell = React.useCallback(({ word, columnKey }: { word: WordEntry, columnKey: string }) => {
+        const cellValue = word[columnKey as keyof WordEntry];
 
         switch (columnKey) {
             case "actions":
