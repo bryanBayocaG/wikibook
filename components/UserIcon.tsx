@@ -1,3 +1,4 @@
+import { auth } from "@/utils/firebase";
 import {
     Dropdown,
     DropdownTrigger,
@@ -6,6 +7,16 @@ import {
     Avatar,
     User,
 } from "@nextui-org/react";
+import { signOut } from "firebase/auth";
+
+const HandleSignOut = async () => {
+    try {
+        await signOut(auth);
+        console.log("logout");
+    } catch (error) {
+        console.error("Sign-out failed:", error);
+    }
+}
 
 export default function UserIcon() {
     return (
@@ -38,7 +49,8 @@ export default function UserIcon() {
                     </DropdownItem>
                     <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
                     <DropdownItem key="logout" color="danger">
-                        Log Out
+                        <button onClick={HandleSignOut}>Log Out</button>
+
                     </DropdownItem>
                 </DropdownMenu>
             </Dropdown>

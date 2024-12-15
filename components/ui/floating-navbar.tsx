@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     motion,
     AnimatePresence,
@@ -9,6 +9,9 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import UserIcon from "../UserIcon";
+import { auth } from "@/utils/firebase";
+import ModalButton from "./Modal";
+import { User } from "firebase/auth";
 
 const ModeSwitchNoSSR = dynamic(
     () => import('@/components/ModeSwitch'),
@@ -22,6 +25,17 @@ export const FloatingNav = ({
 }) => {
     const visible = true;
     const itsZero = false;
+
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            setCurrentUser(user); // Update state when auth state changes
+        });
+
+        return () => unsubscribe(); // Clean up the listener on unmount
+    }, []);
+
     return (
         <AnimatePresence mode="wait">
             <motion.div
@@ -37,7 +51,7 @@ export const FloatingNav = ({
                     duration: 0.2,
                 }}
                 className={cn(
-                    `flex rounded-2xl fixed z-[5000] inset-x-0 mx-10 px-5 py-2 md:py-5 space-x-4  ${itsZero ? "bg-transparent" : " backdrop-blur-[16px] shadow-2xl"}`,
+                    `flex rounded-2xl fixed inset-x-0 mx-10 px-5 py-2 md:py-5 space-x-4  ${itsZero ? "bg-transparent" : " backdrop-blur-[16px] shadow-2xl"}`,
                     className
                 )}
             >
@@ -79,7 +93,19 @@ export const FloatingNav = ({
                         Linkedin
                     </span>
                 </a> */}
-                <UserIcon />
+
+                {currentUser ?
+                    <UserIcon /> :
+                    <div className="flex items-center justify-center">
+                        <ModalButton name={"Sign In"} />
+                    </div>
+
+                }
+
+
+
+
+
             </motion.div>
         </AnimatePresence>
     );

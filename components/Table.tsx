@@ -378,7 +378,7 @@ export default function TableFinalForm() {
                         {/* <Button color="primary" endContent={<PlusIcon />}>
                             Add New
                         </Button> */}
-                        <ModalButton />
+                        <ModalButton name={"Add a word"} />
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
