@@ -194,12 +194,12 @@ export default function App() {
         let filteredWords = [...words];
 
         if (hasSearchFilter) {
-            filteredWords = filteredWords.filter((word) =>
-                word.word.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredWords = filteredWords.filter((words) =>
+                words.word.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
         return filteredWords;
-    }, [words, filterValue, hasSearchFilter]);
+    }, [words, filterValue]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
