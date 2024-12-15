@@ -17,6 +17,7 @@ import {
 } from "@nextui-org/react";
 import db from "@/utils/firebase";
 import { collection, getDocs } from "@firebase/firestore";
+import ModalButton from "./ui/Modal";
 
 export const columns = [
     { name: "ID", uid: "id", sortable: true },
@@ -153,17 +154,17 @@ const INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"];
 
 export default function App() {
     const [words, setWords2] = useState<{ id: string;[key: string]: any }[]>([])
-    useEffect(() => {
-        const fetchWords = async () => {
-            const querySnapShot = await getDocs(collection(db, 'Definitions'))
-            setWords2(
-                querySnapShot.docs.map((doc) => (
-                    { ...doc.data(), id: doc.id }
-                ))
-            )
-        }
-        fetchWords()
-    }, [])
+    // useEffect(() => {
+    //     const fetchWords = async () => {
+    //         const querySnapShot = await getDocs(collection(db, 'Definitions'))
+    //         setWords2(
+    //             querySnapShot.docs.map((doc) => (
+    //                 { ...doc.data(), id: doc.id }
+    //             ))
+    //         )
+    //     }
+    //     fetchWords()
+    // }, [])
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -305,9 +306,10 @@ export default function App() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="primary" endContent={<PlusIcon />}>
+                        {/* <Button color="primary" endContent={<PlusIcon />}>
                             Add New
-                        </Button>
+                        </Button> */}
+                        <ModalButton />
                     </div>
                 </div>
                 <div className="flex justify-between items-center">

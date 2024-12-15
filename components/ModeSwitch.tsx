@@ -12,10 +12,8 @@ const ModeSwitch = () => {
 
     if (isOn) {
         setTheme('light')
-        console.log("let there be light");
     } else {
         setTheme('dark')
-        console.log("darkness shall prevail");
     }
 
     const toggleSwitch = () => setIsOn(!isOn);
