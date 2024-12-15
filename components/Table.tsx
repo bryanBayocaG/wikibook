@@ -341,6 +341,7 @@ export default function App() {
         words.length,
         onSearchChange,
         hasSearchFilter,
+        onClear
     ]);
 
     const bottomContent = React.useMemo(() => {
@@ -370,7 +371,7 @@ export default function App() {
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    }, [selectedKeys, items.length, page, pages, hasSearchFilter, filteredItems.length, onNextPage, onPreviousPage,]);
 
     return (
         <Table
