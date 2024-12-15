@@ -24,6 +24,110 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;
 };
 
+export function capitalize(s: string) {
+    return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
+}
+
+export const PlusIcon = ({ size = 24, width, height, ...props }: IconSvgProps) => {
+    return (
+        <svg
+            aria-hidden="true"
+            fill="none"
+            focusable="false"
+            height={size || height}
+            role="presentation"
+            viewBox="0 0 24 24"
+            width={size || width}
+            {...props}
+        >
+            <g
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+            >
+                <path d="M6 12h12" />
+                <path d="M12 18V6" />
+            </g>
+        </svg>
+    );
+};
+
+export const VerticalDotsIcon = ({ size = 24, width, height, ...props }: IconSvgProps) => {
+    return (
+        <svg
+            aria-hidden="true"
+            fill="none"
+            focusable="false"
+            height={size || height}
+            role="presentation"
+            viewBox="0 0 24 24"
+            width={size || width}
+            {...props}
+        >
+            <path
+                d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                fill="currentColor"
+            />
+        </svg>
+    );
+};
+
+export const SearchIcon = (props: IconSvgProps) => {
+    return (
+        <svg
+            aria-hidden="true"
+            fill="none"
+            focusable="false"
+            height="1em"
+            role="presentation"
+            viewBox="0 0 24 24"
+            width="1em"
+            {...props}
+        >
+            <path
+                d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+            />
+            <path
+                d="M22 22L20 20"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+            />
+        </svg>
+    );
+};
+
+export const ChevronDownIcon = ({ strokeWidth = 1.5, ...otherProps }: IconSvgProps) => {
+    return (
+        <svg
+            aria-hidden="true"
+            fill="none"
+            focusable="false"
+            height="1em"
+            role="presentation"
+            viewBox="0 0 24 24"
+            width="1em"
+            {...otherProps}
+        >
+            <path
+                d="m19.92 8.95-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeMiterlimit={10}
+                strokeWidth={strokeWidth}
+            />
+        </svg>
+    );
+};
+
 export const columns = [
     { name: "ID", uid: "id", sortable: true },
     { name: "NAME", uid: "name", sortable: true },
@@ -100,7 +204,7 @@ export const users = [
         age: "29",
         avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
         email: "brian.kim@example.com",
-        status: "active",
+        status: "Active",
     },
     {
         id: 7,
@@ -244,110 +348,6 @@ export const users = [
     },
 ];
 
-export function capitalize(s: string): string {
-    return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
-}
-
-export const PlusIcon = ({ size = 24, width, height, ...props }: IconSvgProps) => {
-    return (
-        <svg
-            aria-hidden="true"
-            fill="none"
-            focusable="false"
-            height={size || height}
-            role="presentation"
-            viewBox="0 0 24 24"
-            width={size || width}
-            {...props}
-        >
-            <g
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-            >
-                <path d="M6 12h12" />
-                <path d="M12 18V6" />
-            </g>
-        </svg>
-    );
-};
-
-export const VerticalDotsIcon = ({ size = 24, width, height, ...props }: IconSvgProps) => {
-    return (
-        <svg
-            aria-hidden="true"
-            fill="none"
-            focusable="false"
-            height={size || height}
-            role="presentation"
-            viewBox="0 0 24 24"
-            width={size || width}
-            {...props}
-        >
-            <path
-                d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
-                fill="currentColor"
-            />
-        </svg>
-    );
-};
-
-export const SearchIcon = (props: IconSvgProps) => {
-    return (
-        <svg
-            aria-hidden="true"
-            fill="none"
-            focusable="false"
-            height="1em"
-            role="presentation"
-            viewBox="0 0 24 24"
-            width="1em"
-            {...props}
-        >
-            <path
-                d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-            />
-            <path
-                d="M22 22L20 20"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-            />
-        </svg>
-    );
-};
-
-export const ChevronDownIcon = ({ strokeWidth = 1.5, ...otherProps }: IconSvgProps) => {
-    return (
-        <svg
-            aria-hidden="true"
-            fill="none"
-            focusable="false"
-            height="1em"
-            role="presentation"
-            viewBox="0 0 24 24"
-            width="1em"
-            {...otherProps}
-        >
-            <path
-                d="m19.92 8.95-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeMiterlimit={10}
-                strokeWidth={strokeWidth}
-            />
-        </svg>
-    );
-};
-
 const statusColorMap: Record<string, ChipProps["color"]> = {
     active: "success",
     paused: "danger",
@@ -370,9 +370,8 @@ export default function App() {
         column: "age",
         direction: "ascending",
     });
-    const [page, setPage] = React.useState(1);
 
-    const pages = Math.ceil(users.length / rowsPerPage);
+    const [page, setPage] = React.useState(1);
 
     const hasSearchFilter = Boolean(filterValue);
 
@@ -399,6 +398,8 @@ export default function App() {
         return filteredUsers;
     }, [users, filterValue, statusFilter]);
 
+    const pages = Math.ceil(filteredItems.length / rowsPerPage);
+
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
@@ -423,10 +424,7 @@ export default function App() {
             case "name":
                 return (
                     <User
-                        avatarProps={{ radius: "full", size: "sm", src: user.avatar }}
-                        classNames={{
-                            description: "text-default-500",
-                        }}
+                        avatarProps={{ radius: "lg", src: user.avatar }}
                         description={user.email}
                         name={cellValue}
                     >
@@ -437,27 +435,22 @@ export default function App() {
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">{cellValue}</p>
-                        <p className="text-bold text-tiny capitalize text-default-500">{user.team}</p>
+                        <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
                     </div>
                 );
             case "status":
                 return (
-                    <Chip
-                        className="capitalize border-none gap-1 text-default-600"
-                        color={statusColorMap[user.status]}
-                        size="sm"
-                        variant="dot"
-                    >
+                    <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
                         {cellValue}
                     </Chip>
                 );
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
-                        <Dropdown className="bg-background border-1 border-default-200">
+                        <Dropdown>
                             <DropdownTrigger>
-                                <Button isIconOnly radius="full" size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-400" />
+                                <Button isIconOnly size="sm" variant="light">
+                                    <VerticalDotsIcon className="text-default-300" />
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
@@ -473,6 +466,18 @@ export default function App() {
         }
     }, []);
 
+    const onNextPage = React.useCallback(() => {
+        if (page < pages) {
+            setPage(page + 1);
+        }
+    }, [page, pages]);
+
+    const onPreviousPage = React.useCallback(() => {
+        if (page > 1) {
+            setPage(page - 1);
+        }
+    }, [page]);
+
     const onRowsPerPageChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));
         setPage(1);
@@ -487,32 +492,28 @@ export default function App() {
         }
     }, []);
 
+    const onClear = React.useCallback(() => {
+        setFilterValue("");
+        setPage(1);
+    }, []);
+
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
-                        classNames={{
-                            base: "w-full sm:max-w-[44%]",
-                            inputWrapper: "border-1",
-                        }}
+                        className="w-full sm:max-w-[44%]"
                         placeholder="Search by name..."
-                        size="sm"
-                        startContent={<SearchIcon className="text-default-300" />}
+                        startContent={<SearchIcon />}
                         value={filterValue}
-                        variant="bordered"
-                        onClear={() => setFilterValue("")}
+                        onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
-                                <Button
-                                    endContent={<ChevronDownIcon className="text-small" />}
-                                    size="sm"
-                                    variant="flat"
-                                >
+                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
                                     Status
                                 </Button>
                             </DropdownTrigger>
@@ -533,11 +534,7 @@ export default function App() {
                         </Dropdown>
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
-                                <Button
-                                    endContent={<ChevronDownIcon className="text-small" />}
-                                    size="sm"
-                                    variant="flat"
-                                >
+                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
                                     Columns
                                 </Button>
                             </DropdownTrigger>
@@ -556,7 +553,7 @@ export default function App() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button className="bg-foreground text-background" endContent={<PlusIcon />} size="sm">
+                        <Button color="primary" endContent={<PlusIcon />}>
                             Add New
                         </Button>
                     </div>
@@ -590,59 +587,41 @@ export default function App() {
     const bottomContent = React.useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
-                <Pagination
-                    showControls
-                    classNames={{
-                        cursor: "bg-foreground text-background",
-                    }}
-                    color="default"
-                    isDisabled={hasSearchFilter}
-                    page={page}
-                    total={pages}
-                    variant="light"
-                    onChange={setPage}
-                />
-                <span className="text-small text-default-400">
+                <span className="w-[30%] text-small text-default-400">
                     {selectedKeys === "all"
                         ? "All items selected"
-                        : `${selectedKeys.size} of ${items.length} selected`}
+                        : `${selectedKeys.size} of ${filteredItems.length} selected`}
                 </span>
+                <Pagination
+                    isCompact
+                    showControls
+                    showShadow
+                    color="primary"
+                    page={page}
+                    total={pages}
+                    onChange={setPage}
+                />
+                <div className="hidden sm:flex w-[30%] justify-end gap-2">
+                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
+                        Previous
+                    </Button>
+                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
+                        Next
+                    </Button>
+                </div>
             </div>
         );
     }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
-    const classNames = React.useMemo(
-        () => ({
-            wrapper: ["max-h-[382px]", "max-w-3xl"],
-            th: ["bg-transparent", "text-default-500", "border-b", "border-divider"],
-            td: [
-                // changing the rows border radius
-                // first
-                "group-data-[first=true]/tr:first:before:rounded-none",
-                "group-data-[first=true]/tr:last:before:rounded-none",
-                // middle
-                "group-data-[middle=true]/tr:before:rounded-none",
-                // last
-                "group-data-[last=true]/tr:first:before:rounded-none",
-                "group-data-[last=true]/tr:last:before:rounded-none",
-            ],
-        }),
-        [],
-    );
-
     return (
         <Table
-            isCompact
-            removeWrapper
+            isHeaderSticky
             aria-label="Example table with custom cells, pagination and sorting"
             bottomContent={bottomContent}
             bottomContentPlacement="outside"
-            checkboxesProps={{
-                classNames: {
-                    wrapper: "after:bg-foreground after:text-background text-background",
-                },
+            classNames={{
+                wrapper: "max-h-[382px]",
             }}
-            classNames={classNames}
             selectedKeys={selectedKeys}
             selectionMode="multiple"
             sortDescriptor={sortDescriptor}

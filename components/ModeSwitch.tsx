@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { IoSunnyOutline } from "react-icons/io5";
@@ -10,11 +10,9 @@ const ModeSwitch = () => {
     const [isOn, setIsOn] = useState(false);
 
 
-    if (isOn) {
-        setTheme('light')
-    } else {
-        setTheme('dark')
-    }
+    useEffect(() => {
+        setTheme(isOn ? 'light' : 'dark');
+    }, [isOn, setTheme]);
 
     const toggleSwitch = () => setIsOn(!isOn);
     return (
