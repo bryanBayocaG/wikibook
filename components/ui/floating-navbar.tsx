@@ -55,6 +55,7 @@ export const FloatingNav = ({
                 </Link>
                 <div className="invisible-space w-6/12"></div>
                 <ModeSwitchNoSSR />
+                <a href="/my_library">Lib</a>
                 <a
                     href="https://github.com/bryanBayocaG"
                     rel="noopener noreferrer"
