@@ -1,5 +1,6 @@
 import { toast, Bounce } from "react-toastify";
-const notify = () => toast.success(' Wow so easy!', {
+
+const notify = (theme: string) => toast.success(' Wow so easy!', {
     position: "top-center",
     autoClose: 5000,
     hideProgressBar: false,
@@ -7,7 +8,7 @@ const notify = () => toast.success(' Wow so easy!', {
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-    theme: "dark",
+    theme: theme,
     transition: Bounce
 });
 export default notify
