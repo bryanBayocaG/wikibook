@@ -7,8 +7,11 @@ import { FcGoogle } from "react-icons/fc";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, db, googleProvider } from "@/utils/firebase";
 import { doc, setDoc } from "@firebase/firestore"
+import { useAuthStore } from "@/app/store";
 
 export function SignupForm() {
+
+    const currentOn = useAuthStore((state) => state.currentOn)
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     console.log("hello", auth.currentUser?.email)
@@ -19,6 +22,7 @@ export function SignupForm() {
             const userCredential = await createUserWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
             const userId = userCredential.user.uid;
             console.log('User ID:', userId);
+            currentOn()
 
         }
     };
@@ -29,6 +33,7 @@ export function SignupForm() {
             const userId = userCredential.user.uid;
             const docref = doc(db, "Users", userId)
             await setDoc(docref, { name: userId })
+            currentOn()
 
         } catch (error) {
             console.log("error", error);

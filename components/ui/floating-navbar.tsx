@@ -1,5 +1,4 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import {
     motion,
     AnimatePresence,
@@ -9,9 +8,8 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import UserIcon from "../UserIcon";
-import { auth } from "@/utils/firebase";
 import ModalButton from "./Modal";
-import { User } from "firebase/auth";
+import { useAuthStore } from "@/app/store";
 
 const ModeSwitchNoSSR = dynamic(
     () => import('@/components/ModeSwitch'),
@@ -25,17 +23,7 @@ export const FloatingNav = ({
 }) => {
     const visible = true;
     const itsZero = false;
-
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            setCurrentUser(user); // Update state when auth state changes
-        });
-
-        return () => unsubscribe(); // Clean up the listener on unmount
-    }, []);
-
+    const currentAuth = useAuthStore((state) => state.currentAuth)
     return (
         <AnimatePresence mode="wait">
             <motion.div
@@ -67,45 +55,12 @@ export const FloatingNav = ({
                 </Link>
                 <div className="invisible-space w-6/12"></div>
                 <ModeSwitchNoSSR />
-                {/* <a
-                    href="https://github.com/bryanBayocaG"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    className={cn(
-                        "relative items-center flex space-x-1  dark:hover:text-neutral-300 hover:text-neutral-500"
-                    )}
-                >
-                    <FaGithub className="w-7 h-7" />
-                    <span className="hidden md:block text-sm !cursor-pointer">
-                        Github
-                    </span>
-                </a>
-                <a
-                    href="https://www.linkedin.com/in/bryan-bayoca"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    className={cn(
-                        "relative items-center flex space-x-1  dark:hover:text-neutral-300 hover:text-neutral-500"
-                    )}
-                >
-                    <CiLinkedin className="w-7 h-7" />
-                    <span className="hidden md:block text-sm !cursor-pointer">
-                        Linkedin
-                    </span>
-                </a> */}
-
-                {currentUser ?
+                {currentAuth ?
                     <UserIcon /> :
                     <div className="flex items-center justify-center">
                         <ModalButton name={"Sign In"} />
                     </div>
-
                 }
-
-
-
-
-
             </motion.div>
         </AnimatePresence>
     );

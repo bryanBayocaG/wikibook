@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/app/store";
 import { auth } from "@/utils/firebase";
 import {
     Dropdown,
@@ -9,16 +10,22 @@ import {
 } from "@nextui-org/react";
 import { signOut } from "firebase/auth";
 
-const HandleSignOut = async () => {
-    try {
-        await signOut(auth);
-        console.log("logout");
-    } catch (error) {
-        console.error("Sign-out failed:", error);
-    }
-}
+
+
+
 
 export default function UserIcon() {
+    const currentOff = useAuthStore((state) => state.currentOff)
+    const HandleSignOut = async () => {
+        try {
+            await signOut(auth);
+            currentOff()
+
+
+        } catch (error) {
+            console.error("Sign-out failed:", error);
+        }
+    }
     return (
         <div className="flex items-center gap-4">
             <Dropdown placement="bottom-start">

@@ -10,7 +10,7 @@ import {
     Input,
     Textarea,
 } from "@nextui-org/react";
-import { PlusIcon } from "../Table";
+import { PlusIcon } from "./TableSVG";
 import { useTheme } from 'next-themes'
 import { SignupForm } from "../SignUp";
 import { CiUser } from "react-icons/ci";
