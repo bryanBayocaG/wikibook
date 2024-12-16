@@ -1,53 +1,73 @@
 "use client"
+import { useAuthStore } from "@/app/store";
+import { db } from "@/utils/firebase";
+import { collection } from "@firebase/firestore";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { useCollection } from "react-firebase-hooks/firestore";
 
-export const animals = [
-    { label: "Cat", key: "cat", description: "The second most popular pet in the world" },
-    { label: "Dog", key: "dog", description: "The most popular pet in the world" },
-    { label: "Elephant", key: "elephant", description: "The largest land animal" },
-    { label: "Lion", key: "lion", description: "The king of the jungle" },
-    { label: "Tiger", key: "tiger", description: "The largest cat species" },
-    { label: "Giraffe", key: "giraffe", description: "The tallest land animal" },
-    {
-        label: "Dolphin",
-        key: "dolphin",
-        description: "A widely distributed and diverse group of aquatic mammals",
-    },
-    { label: "Penguin", key: "penguin", description: "A group of aquatic flightless birds" },
-    { label: "Zebra", key: "zebra", description: "A several species of African equids" },
-    {
-        label: "Shark",
-        key: "shark",
-        description: "A group of elasmobranch fish characterized by a cartilaginous skeleton",
-    },
-    { label: "Whale", key: "whale", description: "Diverse group of fully aquatic placental marine mammals" },
-    { label: "Otter", key: "otter", description: "A carnivorous mammal in the subfamily Lutrinae" },
-    { label: "Crocodile", key: "crocodile", description: "A large semiaquatic reptile" },
-];
+type Word = {
+    label: string;
+    key: number;
+    description: string;
+};
 
 
 
 export default function AutoComplete() {
+    const currentAuth = useAuthStore((state) => state.currentAuth)
+    const currentAuthId = useAuthStore((state) => state.currentAuthId)
+    const query = currentAuth ? collection(db, `Users/${currentAuthId}/wordsAndDef`) : null;
+    const [value] = useCollection(query);
+
+    const [words, setWords] = useState<Word[]>([
+        { label: "Bryan Bayoca", key: 1, description: "A fresh grad web developer who created this app." },
+        { label: "WikiPok", key: 2, description: "A mobile responsive web app that acts as a personal library for words and deifinition where user can add words with definition and can get the definition of it or vise versa." },
+
+
+    ]);
+
+    const [decription, setDecription] = useState<Word[]>([
+        { label: "A fresh grad web developer who created this app.", key: 4, description: "Bryan Bayoca" },
+        { label: "A mobile responsive web app that acts as a personal library for words and deifinition where user can add words with definition and can get the definition of it or vise versa.", key: 5, description: "Wikipok" },
+
+
+    ]);
+
+    useEffect(() => {
+        if (value) {
+            const newWords: Word[] = value.docs.map((doc, i) => ({
+                key: i,
+                label: doc.data().name || "",
+                description: doc.data().definition || "",
+            }));
+            const newDesciptions: Word[] = value.docs.map((doc, i) => ({
+                key: i + Math.random(),
+                label: doc.data().definition || "",
+                description: doc.data().name || "",
+            }));
+            setWords(newWords);
+            setDecription(newDesciptions);
+        }
+    }, [value]);
+
+    const combinedItems = [...words, ...decription]
+
     return (
         <div className="relative p-1 flex">
             <Autocomplete
+                isVirtualized
                 allowsCustomValue
                 className="w-full"
-                defaultItems={animals}
-                label="Search an animal"
+                defaultItems={combinedItems}
+                label="Search a word or description..."
                 variant="bordered"
             >
-
                 {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
-                {/* <SearchButton /> */}
-
 
             </Autocomplete>
             <div className="absolute bottom-0 rounded-2xl h-full w-28 bg-transparent right-0">
-                {/* <div className="w-full h-full flex items-center justify-center">
-                    <Button color="primary">Button</Button>
-                </div> */}
                 <Button className="w-full h-full" color="primary">Search</Button>
 
             </div>
