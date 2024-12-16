@@ -1,14 +1,27 @@
-// import { toast, Bounce } from "react-toastify";
+"use client"
+import { useThemeStore } from '@/app/store';
+import React from 'react'
+import { ToastContainer, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-// const notify = (theme: string) => toast.success(' Wow so easy!', {
-//     position: "top-center",
-//     autoClose: 5000,
-//     hideProgressBar: false,
-//     closeOnClick: true,
-//     pauseOnHover: true,
-//     draggable: true,
-//     progress: undefined,
-//     theme: theme,
-//     transition: Bounce
-// });
-// export default notify
+
+const Alert = () => {
+    const currentTheme = useThemeStore((state) => state.theme)
+    return (
+        <ToastContainer
+            position="top-center"
+            autoClose={1200}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme={currentTheme}
+            transition={Bounce}
+        />
+    )
+}
+
+export default Alert

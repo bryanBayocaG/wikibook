@@ -14,7 +14,7 @@ import { PlusIcon } from "../Table";
 import { useTheme } from 'next-themes'
 import { SignupForm } from "../SignUp";
 import { CiUser } from "react-icons/ci";
-// import notify from "./Alert";
+import { toast } from 'react-toastify';
 
 
 
@@ -41,9 +41,10 @@ export default function ModalButton({ name }: Props) {
         onOpen();
     };
 
-    // const handleAdd = (theme: string) => {
-    //     // notify(theme)
-    // };
+    const handleAdd = () => {
+        // notify(theme)
+        toast("Added successfully");
+    };
 
     return (
         <>
@@ -89,7 +90,7 @@ export default function ModalButton({ name }: Props) {
                                     <Button color="danger" variant="light" onPress={onClose}>
                                         Close
                                     </Button>
-                                    <Button color="primary" /* onPress={() => handleAdd(theme || '')} */>
+                                    <Button color="primary" onPress={() => handleAdd()}>
                                         Add the word
                                     </Button>
                                 </ModalFooter>

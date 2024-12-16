@@ -15,3 +15,5 @@ export const useThemeStore = create<ThemeStore>((set) => ({
     set({ theme: "light" });
   },
 }));
+
+// const currentTheme = useThemeStore((state) => state.theme)
