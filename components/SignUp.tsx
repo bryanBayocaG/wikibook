@@ -5,7 +5,8 @@ import { Input } from "./ui/input";
 import { cn } from "@/lib/utils";
 import { FcGoogle } from "react-icons/fc";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "@/utils/firebase";
+import { auth, db, googleProvider } from "@/utils/firebase";
+import { doc, setDoc } from "@firebase/firestore"
 
 export function SignupForm() {
     const emailRef = useRef<HTMLInputElement>(null);
@@ -24,7 +25,11 @@ export function SignupForm() {
 
     const handleGoogleSignIn = async () => {
         try {
-            await signInWithPopup(auth, googleProvider)
+            const userCredential = await signInWithPopup(auth, googleProvider)
+            const userId = userCredential.user.uid;
+            const docref = doc(db, "Users", userId)
+            await setDoc(docref, { name: userId })
+
         } catch (error) {
             console.log("error", error);
         }

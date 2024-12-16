@@ -1,5 +1,5 @@
 "use client"
-import React, { SVGProps } from "react";
+import React, { SVGProps, useEffect, useState } from "react";
 import {
     Table,
     TableHeader,
@@ -13,14 +13,14 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Chip,
-    User,
     Pagination,
     Selection,
-    ChipProps,
     SortDescriptor,
 } from "@nextui-org/react";
 import ModalButton from "./ui/Modal";
+import { collection } from "@firebase/firestore";
+import { useCollection } from 'react-firebase-hooks/firestore';
+import { db } from "@/utils/firebase";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
     size?: number;
@@ -132,12 +132,8 @@ export const ChevronDownIcon = ({ strokeWidth = 1.5, ...otherProps }: IconSvgPro
 
 export const columns = [
     { name: "ID", uid: "id", sortable: true },
-    { name: "NAME", uid: "name", sortable: true },
-    { name: "AGE", uid: "age", sortable: true },
-    { name: "ROLE", uid: "role", sortable: true },
-    { name: "TEAM", uid: "team" },
-    { name: "EMAIL", uid: "email" },
-    { name: "STATUS", uid: "status", sortable: true },
+    { name: "WORD", uid: "word", sortable: true },
+    { name: "DEFINITION", uid: "definition" },
     { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -147,49 +143,53 @@ export const statusOptions = [
     { name: "Vacation", uid: "vacation" },
 ];
 
-export const users = [
-    {
-        id: 1,
-        name: "Tony Reichert",
-        role: "CEO",
-        team: "Management",
-        status: "active",
-        age: "29",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-        email: "tony.reichert@example.com",
-    },
-    {
-        id: 2,
-        name: "Zoey Lang",
-        role: "Tech Lead",
-        team: "Development",
-        status: "paused",
-        age: "25",
-        avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-        email: "zoey.lang@example.com",
-    },
-];
+// export const words = [
+//     {
+//         id: 1,
+//         word: "nayanaya",
+//         definition: "idk"
+//     },
+//     {
+//         id: 2,
+//         word: "zuwardo",
+//         definition: "jojojojo"
+//     },
+// ];
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-    active: "success",
-    paused: "danger",
-    vacation: "warning",
+
+const INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"];
+
+// type Words = (typeof words)[0];
+type Word = {
+    id: number;
+    word: string;
+    definition: string;
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
-
-type User = (typeof users)[0];
-
 export default function TableFinalForm() {
+    const query = collection(db, "Users/9c1gnMFIOeXXzJW7KgqgzY8xzQl2/wordsAndDef")
+    const [value,] = useCollection(query);
+    const [words, setWords] = useState<Word[]>([]);
+
+    useEffect(() => {
+        if (value) {
+            const newWords: Word[] = value.docs.map((doc, i) => ({
+                id: i,
+                word: doc.data().name || "", // Default empty string for safety
+                definition: doc.data().definition || "", // Default empty string for safety
+            }));
+            setWords(newWords);
+        }
+    }, [value]);
+
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
         new Set(INITIAL_VISIBLE_COLUMNS),
     );
-    const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-        column: "age",
+        column: "word",
         direction: "ascending",
     });
 
@@ -204,21 +204,15 @@ export default function TableFinalForm() {
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredUsers = [...users];
+        let filteredUsers = words || [];
 
         if (hasSearchFilter) {
-            filteredUsers = filteredUsers.filter((user) =>
-                user.name.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredUsers = filteredUsers.filter((word) =>
+                word.word.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
-        if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-            filteredUsers = filteredUsers.filter((user) =>
-                Array.from(statusFilter).includes(user.status),
-            );
-        }
-
         return filteredUsers;
-    }, [users, filterValue, statusFilter]);
+    }, [words, filterValue]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -230,42 +224,20 @@ export default function TableFinalForm() {
     }, [page, filteredItems, rowsPerPage]);
 
     const sortedItems = React.useMemo(() => {
-        return [...items].sort((a: User, b: User) => {
-            const first = a[sortDescriptor.column as keyof User] as number;
-            const second = b[sortDescriptor.column as keyof User] as number;
+        return [...items].sort((a: Word, b: Word) => {
+            const first = a[sortDescriptor.column as keyof Word] as number;
+            const second = b[sortDescriptor.column as keyof Word] as number;
             const cmp = first < second ? -1 : first > second ? 1 : 0;
 
             return sortDescriptor.direction === "descending" ? -cmp : cmp;
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-        const cellValue = user[columnKey as keyof User];
+    const renderCell = React.useCallback((user: Word, columnKey: React.Key) => {
+        const cellValue = user[columnKey as keyof Word];
 
         switch (columnKey) {
-            case "name":
-                return (
-                    <User
-                        avatarProps={{ radius: "lg", src: user.avatar }}
-                        description={user.email}
-                        name={cellValue}
-                    >
-                        {user.email}
-                    </User>
-                );
-            case "role":
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">{cellValue}</p>
-                        <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
-                    </div>
-                );
-            case "status":
-                return (
-                    <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-                        {cellValue}
-                    </Chip>
-                );
+
             case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
@@ -336,27 +308,6 @@ export default function TableFinalForm() {
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                                    Status
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={statusFilter}
-                                selectionMode="multiple"
-                                onSelectionChange={setStatusFilter}
-                            >
-                                {statusOptions.map((status) => (
-                                    <DropdownItem key={status.uid} className="capitalize">
-                                        {capitalize(status.name)}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
                                     Columns
                                 </Button>
                             </DropdownTrigger>
@@ -382,7 +333,7 @@ export default function TableFinalForm() {
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {users.length} users</span>
+                    <span className="text-default-400 text-small">Total {words.length} words</span>
                     <label className="flex items-center text-default-400 text-small">
                         Rows per page:
                         <select
@@ -399,11 +350,11 @@ export default function TableFinalForm() {
         );
     }, [
         filterValue,
-        statusFilter,
+
         visibleColumns,
         onSearchChange,
         onRowsPerPageChange,
-        users.length,
+        words.length,
         hasSearchFilter,
     ]);
 
@@ -464,7 +415,7 @@ export default function TableFinalForm() {
                     </TableColumn>
                 )}
             </TableHeader>
-            <TableBody emptyContent={"No users found"} items={sortedItems}>
+            <TableBody emptyContent={"No words found"} items={sortedItems}>
                 {(item) => (
                     <TableRow key={item.id}>
                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
