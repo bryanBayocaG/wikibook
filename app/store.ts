@@ -8,8 +8,9 @@ type ThemeStore = {
 
 type AuthStore = {
   currentAuth: boolean;
+  currentAuthId: string;
   currentOff: () => void;
-  currentOn: () => void;
+  currentOn: (id: string) => void;
 };
 
 export const useThemeStore = create<ThemeStore>((set) => ({
@@ -24,11 +25,12 @@ export const useThemeStore = create<ThemeStore>((set) => ({
 
 export const useAuthStore = create<AuthStore>((set) => ({
   currentAuth: false,
+  currentAuthId: "",
   currentOff: () => {
-    set({ currentAuth: false });
+    set({ currentAuth: false, currentAuthId: "" });
   },
-  currentOn: () => {
-    set({ currentAuth: true });
+  currentOn: (id) => {
+    set({ currentAuth: true, currentAuthId: id });
   },
 }));
 

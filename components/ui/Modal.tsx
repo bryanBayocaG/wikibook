@@ -15,6 +15,7 @@ import { useTheme } from 'next-themes'
 import { SignupForm } from "../SignUp";
 import { CiUser } from "react-icons/ci";
 import { toast } from 'react-toastify';
+import { useAuthStore } from "@/app/store";
 
 
 
@@ -25,7 +26,7 @@ interface Props {
 export default function ModalButton({ name }: Props) {
     const { theme } = useTheme();
 
-
+    const currentAuth = useAuthStore((state) => state.currentAuth)
     const [currentUsage, setCurrentUsage] = useState("");
 
     useEffect(() => {
@@ -43,7 +44,7 @@ export default function ModalButton({ name }: Props) {
 
     const handleAdd = () => {
         // notify(theme)
-        toast("Added successfully");
+        toast.success("Added successfully");
     };
 
     return (
@@ -67,13 +68,11 @@ export default function ModalButton({ name }: Props) {
             <Modal backdrop="blur" isOpen={isOpen} size="5xl" onClose={onClose}>
                 <ModalContent>
                     <>
-                        {currentUsage === "signIn" ? <SignupForm /> :
+                        {currentUsage === "signIn" || !currentAuth ? <SignupForm /> :
                             <>
                                 <ModalHeader className="flex flex-col gap-1">Add more Words and definitioin</ModalHeader>
                                 <ModalBody>
                                     <Input
-
-
                                         label="Word"
                                         placeholder="Enter a word"
                                         variant="bordered"

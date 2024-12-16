@@ -22,6 +22,7 @@ import { collection } from "@firebase/firestore";
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { db } from "@/utils/firebase";
 import { ChevronDownIcon, SearchIcon, VerticalDotsIcon } from "./ui/TableSVG";
+import { useAuthStore } from "@/app/store";
 
 
 export function capitalize(s: string) {
@@ -40,6 +41,7 @@ export const statusOptions = [
 ];
 
 
+
 const INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"];
 
 type Word = {
@@ -49,8 +51,11 @@ type Word = {
 };
 
 export default function TableFinalForm() {
-    const query = collection(db, "Users/9c1gnMFIOeXXzJW7KgqgzY8xzQl2/wordsAndDef")
+    const currentAuth = useAuthStore((state) => state.currentAuth)
+    const currentAuthId = useAuthStore((state) => state.currentAuthId)
+    const query = currentAuth ? collection(db, `Users/${currentAuthId}/wordsAndDef`) : null;
     const [value,] = useCollection(query);
+
     const [words, setWords] = useState<Word[]>([
         {
             id: 0,
@@ -75,6 +80,8 @@ export default function TableFinalForm() {
             setWords(newWords);
         }
     }, [value]);
+
+
 
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
@@ -106,7 +113,7 @@ export default function TableFinalForm() {
             );
         }
         return filteredUsers;
-    }, [words, filterValue]);
+    }, [words, filterValue, hasSearchFilter]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -192,7 +199,7 @@ export default function TableFinalForm() {
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Search by name..."
+                        placeholder="Search by word name..."
                         startContent={<SearchIcon />}
                         value={filterValue}
                         onClear={() => onClear()}
@@ -244,12 +251,11 @@ export default function TableFinalForm() {
         );
     }, [
         filterValue,
-
+        onClear,
         visibleColumns,
         onSearchChange,
         onRowsPerPageChange,
         words.length,
-        hasSearchFilter,
     ]);
 
     const bottomContent = React.useMemo(() => {
@@ -279,7 +285,7 @@ export default function TableFinalForm() {
                 </div>
             </div>
         );
-    }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+    }, [selectedKeys, page, pages, filteredItems.length, onNextPage, onPreviousPage]);
 
     return (
         <Table

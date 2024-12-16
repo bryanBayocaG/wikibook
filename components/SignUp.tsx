@@ -22,7 +22,7 @@ export function SignupForm() {
             const userCredential = await createUserWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
             const userId = userCredential.user.uid;
             console.log('User ID:', userId);
-            currentOn()
+            currentOn(userId)
 
         }
     };
@@ -33,7 +33,7 @@ export function SignupForm() {
             const userId = userCredential.user.uid;
             const docref = doc(db, "Users", userId)
             await setDoc(docref, { name: userId })
-            currentOn()
+            currentOn(userId)
 
         } catch (error) {
             console.log("error", error);
