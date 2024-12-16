@@ -57,14 +57,17 @@ export default function AutoComplete() {
     return (
         <div className="relative p-1 flex">
             <Autocomplete
-                isVirtualized
                 allowsCustomValue
                 className="w-full"
                 defaultItems={combinedItems}
                 label="Search a word or description..."
                 variant="bordered"
             >
-                {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
+                {(item) =>
+                    <AutocompleteItem key={item.key}>
+                        {item.label}
+                    </AutocompleteItem>
+                }
 
             </Autocomplete>
             <div className="absolute bottom-0 rounded-2xl h-full w-28 bg-transparent right-0">
