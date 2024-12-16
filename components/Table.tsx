@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     Table,
     TableHeader,
@@ -56,7 +56,7 @@ export default function TableFinalForm() {
     const query = currentAuth ? collection(db, `Users/${currentAuthId}/wordsAndDef`) : null;
     const [value,] = useCollection(query);
 
-    const [words, setWords] = useState<Word[]>([
+    const defaultWords = useMemo(() => [
         {
             id: 0,
             word: "Bryan Bayoca",
@@ -65,10 +65,11 @@ export default function TableFinalForm() {
         {
             id: 1,
             word: "WikiPok",
-            definition: "A mobile responsive web app that acts as a personal library for words and deifinition where user can add words with definition and can get the definition of it or vise versa.",
+            definition: "A mobile responsive web app that acts as a personal library for words and definitions where users can add words with definitions and can get the definition of it or vice versa.",
         }
+    ], []);
 
-    ]);
+    const [words, setWords] = useState<Word[]>(defaultWords);
 
     useEffect(() => {
         if (value) {
@@ -80,6 +81,12 @@ export default function TableFinalForm() {
             setWords(newWords);
         }
     }, [value]);
+
+    useEffect(() => {
+        if (!currentAuth) {
+            setWords(defaultWords); // Reset to default words when currentAuth is false
+        }
+    }, [currentAuth, defaultWords]);
 
 
 
