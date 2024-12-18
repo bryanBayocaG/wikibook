@@ -9,6 +9,7 @@ import {
     User,
 } from "@nextui-org/react";
 import { signOut } from "firebase/auth";
+import { toast } from "react-toastify";
 
 
 
@@ -18,7 +19,9 @@ export default function UserIcon() {
     const currentOff = useAuthStore((state) => state.currentOff)
     const HandleSignOut = async () => {
         try {
-            await signOut(auth);
+            await signOut(auth).then(() => {
+                toast.success("Signed out successfully");
+            });
             currentOff()
 
 

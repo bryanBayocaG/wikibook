@@ -8,6 +8,7 @@ import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, db, googleProvider } from "@/utils/firebase";
 import { doc, setDoc } from "@firebase/firestore"
 import { useAuthStore } from "@/app/store";
+import { toast } from 'react-toastify';
 
 export function SignupForm() {
 
@@ -32,7 +33,9 @@ export function SignupForm() {
             const userCredential = await signInWithPopup(auth, googleProvider)
             const userId = userCredential.user.uid;
             const docref = doc(db, "Users", userId)
-            await setDoc(docref, { name: userId })
+            await setDoc(docref, { name: userId }).then(() => {
+                toast.success("Login successfully");
+            })
             currentOn(userId)
 
         } catch (error) {
