@@ -18,7 +18,8 @@ interface ResultItem {
     id: string;
     name: string;
     definition: string;
-    [key: string]: any; // For any additional properties
+    [key: string]: string | number | boolean;
+    from: string;
 }
 
 export default function AutoComplete() {
@@ -33,14 +34,14 @@ export default function AutoComplete() {
 
     const [words, setWords] = useState<Word[]>([
         { label: "Bryan Bayoca", key: 1, description: "A fresh grad web developer who created this app." },
-        { label: "WikiPok", key: 2, description: "A mobile responsive web app that acts as a personal library for words and deifinition where user can add words with definition and can get the definition of it or vise versa." },
+        { label: "WikiPok", key: 2, description: "A mobile responsive web app that acts as a personal library for words and deifinition where user can add words with definition and can get the definition of it or vise versa.", from: "default" },
 
 
     ]);
 
     const [decription, setDecription] = useState<Word[]>([
         { label: "A fresh grad web developer who created this app.", key: 4, description: "Bryan Bayoca" },
-        { label: "A mobile responsive web app that acts as a personal library for words and deifinition where user can add words with definition and can get the definition of it or vise versa.", key: 5, description: "Wikipok" },
+        { label: "A mobile responsive web app that acts as a personal library for words and deifinition where user can add words with definition and can get the definition of it or vise versa.", key: 5, description: "Wikipok", from: "default" },
 
 
     ]);
@@ -51,11 +52,13 @@ export default function AutoComplete() {
                 key: i,
                 label: doc.data().name || "",
                 description: doc.data().definition || "",
+                from: doc.data().from || "",
             }));
             const newDesciptions: Word[] = value.docs.map((doc, i) => ({
                 key: i + Math.random(),
                 label: doc.data().definition || "",
                 description: doc.data().name || "",
+                from: doc.data().from || "",
             }));
             setWords(newWords);
             setDecription(newDesciptions);
@@ -75,8 +78,9 @@ export default function AutoComplete() {
                     if (!snapshot.empty) {
                         const results = snapshot.docs.map(doc => ({
                             id: doc.id,
-                            name: doc.data().name || "",//+
-                            definition: doc.data().definition || "",//+
+                            name: doc.data().name || "",
+                            definition: doc.data().definition || "",
+                            from: "word",
                             ...doc.data()
                         }));
                         return results;
@@ -88,6 +92,7 @@ export default function AutoComplete() {
                                 id: doc.id,
                                 name: doc.data().name || "",//+
                                 definition: doc.data().definition || "",//+
+                                from: "definition",
                                 ...doc.data()
                             }));
                             return results;
@@ -122,6 +127,7 @@ export default function AutoComplete() {
     };
 
     const combinedItems = [...words, ...decription]
+    // console.log("heheyow", results[0].id)
 
     return (
         <>
@@ -151,18 +157,30 @@ export default function AutoComplete() {
             </div>
             <div>
                 {error && <p style={{ color: "red" }}>{error}</p>}
-                <ul>
-                    {results.length > 0 ? (
-                        results.map((result, i) => (
-                            <li key={i}>
-                                <strong>{result.name}</strong>: {result.definition}
-                            </li>
-                        ))
+
+
+                {
+                    results.length > 0 ? (
+                        results[0].from === "word" ?
+                            // results.map((result, i) => (
+                            //     <AnswerCard key={i}
+                            //         word={result.name}
+                            //         definition={result.definition}
+                            //     />
+                            // )) 
+                            <p>From word</p>
+                            :
+                            // results.map((result, i) => (
+                            //     <AnswerCard key={i}
+                            //         word={result.definition}
+                            //         definition={result.name}
+                            //     />
+                            // ))
+                            <p>From defiition</p>
                     ) : (
-                        <p>No results found.</p>
-                    )}
-                </ul>
-                <AnswerCard />
+                        <div></div>
+                    )
+                }
             </div>
         </>
     );

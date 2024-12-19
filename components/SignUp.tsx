@@ -22,8 +22,11 @@ export function SignupForm() {
         if (emailRef.current && passwordRef.current) {
             const userCredential = await createUserWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
             const userId = userCredential.user.uid;
+            const userImg = userCredential.user.photoURL;
+            const userEmail = userCredential.user.email;
+            const userName = userCredential.user.displayName;
             console.log('User ID:', userId);
-            currentOn(userId)
+            currentOn(userId, userImg, userEmail, userName)
 
         }
     };
@@ -32,11 +35,14 @@ export function SignupForm() {
         try {
             const userCredential = await signInWithPopup(auth, googleProvider)
             const userId = userCredential.user.uid;
+            const userImg = userCredential.user.photoURL;
+            const userEmail = userCredential.user.email;
+            const userName = userCredential.user.displayName;
             const docref = doc(db, "Users", userId)
             await setDoc(docref, { name: userId }).then(() => {
                 toast.success("Login successfully");
             })
-            currentOn(userId)
+            currentOn(userId, userImg, userEmail, userName)
 
         } catch (error) {
             console.log("error", error);
