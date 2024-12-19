@@ -23,6 +23,7 @@ import { useCollection } from 'react-firebase-hooks/firestore';
 import { db } from "@/utils/firebase";
 import { ChevronDownIcon, SearchIcon, VerticalDotsIcon } from "./ui/TableSVG";
 import { useAuthStore } from "@/app/store";
+import { Capitalize } from "./AnswerCard";
 
 
 export function capitalize(s: string) {
@@ -141,10 +142,22 @@ export default function TableFinalForm() {
         });
     }, [sortDescriptor, items]);
 
-    const renderCell = React.useCallback((user: Word, columnKey: React.Key) => {
-        const cellValue = user[columnKey as keyof Word];
+    const renderCell = React.useCallback((word: Word, columnKey: React.Key) => {
+        const cellValue = word[columnKey as keyof Word];
 
         switch (columnKey) {
+            case "word":
+                return (
+                    <div className="flex justify-start">
+                        <p className="uppercase">{word.word}</p>
+                    </div>
+                );
+            case "definition":
+                return (
+                    <div className="text-wrap">
+                        <p className="text-pretty">{Capitalize(word.definition)}</p>
+                    </div>
+                );
 
             case "actions":
                 return (

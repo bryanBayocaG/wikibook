@@ -6,6 +6,7 @@ import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
 import { useEffect, useRef, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
+import { Chip } from "@nextui-org/react";
 import AnswerCard from "./AnswerCard";
 
 type Word = {
@@ -106,10 +107,10 @@ export default function AutoComplete() {
                     throw error;
                 }
             } else {
-                throw new Error("User is not authenticated.");
+                throw new Error('"Sign in" to use this feature or use "My Library" instead.');
             }
         } else {
-            throw new Error("searchRef is null or empty.");
+            throw new Error('No "word" or "definition" is searched.');
         }
     };
 
@@ -147,6 +148,7 @@ export default function AutoComplete() {
                     defaultItems={combinedItems}
                     label="Search a word or description..."
                     variant="bordered"
+                    required
                 >
                     {(item) =>
                         <AutocompleteItem key={item.key}>
@@ -163,7 +165,11 @@ export default function AutoComplete() {
 
             </div>
             <div>
-                {error && <p style={{ color: "red" }}>{error}</p>}
+                {error &&
+                    <div className="flex justify-center mt-10">
+                        <Chip size="lg" color="warning">{error}</Chip>
+                    </div>
+                }
                 {
                     results.length > 0 ? (
                         results.map((result, i) => (
