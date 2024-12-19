@@ -35,7 +35,7 @@ export default function ModalButton({ name }: Props) {
         } else {
             setCurrentUsage("addWord")
         }
-    }, [])
+    }, [name])
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const handleOpen = () => {

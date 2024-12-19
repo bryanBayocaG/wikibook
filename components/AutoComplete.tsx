@@ -12,6 +12,7 @@ type Word = {
     label: string;
     key: number;
     description: string;
+    from: string;
 };
 
 interface ResultItem {
@@ -33,14 +34,14 @@ export default function AutoComplete() {
     const [error, setError] = useState("");
 
     const [words, setWords] = useState<Word[]>([
-        { label: "Bryan Bayoca", key: 1, description: "A fresh grad web developer who created this app." },
+        { label: "Bryan Bayoca", key: 1, description: "A fresh grad web developer who created this app.", from: "default" },
         { label: "WikiPok", key: 2, description: "A mobile responsive web app that acts as a personal library for words and deifinition where user can add words with definition and can get the definition of it or vise versa.", from: "default" },
 
 
     ]);
 
     const [decription, setDecription] = useState<Word[]>([
-        { label: "A fresh grad web developer who created this app.", key: 4, description: "Bryan Bayoca" },
+        { label: "A fresh grad web developer who created this app.", key: 4, description: "Bryan Bayoca", from: "default" },
         { label: "A mobile responsive web app that acts as a personal library for words and deifinition where user can add words with definition and can get the definition of it or vise versa.", key: 5, description: "Wikipok", from: "default" },
 
 
@@ -162,21 +163,21 @@ export default function AutoComplete() {
                 {
                     results.length > 0 ? (
                         results[0].from === "word" ?
-                            // results.map((result, i) => (
-                            //     <AnswerCard key={i}
-                            //         word={result.name}
-                            //         definition={result.definition}
-                            //     />
-                            // )) 
-                            <p>From word</p>
+                            results.map((result, i) => (
+                                <AnswerCard key={i}
+                                    word={result.name}
+                                    definition={result.definition}
+                                />
+                            ))
+                            // <p>From word</p>
                             :
-                            // results.map((result, i) => (
-                            //     <AnswerCard key={i}
-                            //         word={result.definition}
-                            //         definition={result.name}
-                            //     />
-                            // ))
-                            <p>From defiition</p>
+                            results.map((result, i) => (
+                                <AnswerCard key={i}
+                                    word={result.definition}
+                                    definition={result.name}
+                                />
+                            ))
+                        // <p>From defiition</p>
                     ) : (
                         <div></div>
                     )
