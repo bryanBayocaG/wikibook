@@ -13,7 +13,7 @@ type AuthStore = {
   currentAuthImg: string | null;
   currentAuthEmail: string | null;
   currentAuthDisplayName: string | null;
-  currentOff: (id: string, img: string, email: string, name: string) => void;
+  currentOff: () => void;
   currentOn: (
     id: string,
     img: string | null,
