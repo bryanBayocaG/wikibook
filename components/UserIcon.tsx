@@ -17,6 +17,9 @@ import { toast } from "react-toastify";
 
 export default function UserIcon() {
     const currentOff = useAuthStore((state) => state.currentOff)
+    const userImg = useAuthStore((state) => state.currentAuthImg)
+    const userEmail = useAuthStore((state) => state.currentAuthEmail)
+    const userName = useAuthStore((state) => state.currentAuthDisplayName)
     const HandleSignOut = async () => {
         try {
             await signOut(auth).then(() => {
@@ -38,15 +41,15 @@ export default function UserIcon() {
                             as="button"
                             avatarProps={{
                                 isBordered: true,
-                                src: `${auth.currentUser?.photoURL}`,
+                                src: `${userImg}`,
                             }}
                             className="hidden md:flex transition-transform"
                             description={
                                 <div className="truncate w-28">
-                                    {auth.currentUser?.email}
+                                    {userEmail}
                                 </div>
                             }
-                            name={auth.currentUser?.displayName}
+                            name={userName}
                         />
                         <Avatar
                             isBordered
