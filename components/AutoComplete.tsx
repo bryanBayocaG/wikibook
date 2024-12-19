@@ -127,9 +127,15 @@ export default function AutoComplete() {
         }
     };
 
-    const combinedItems = [...words, ...decription]
-    // console.log("heheyow", results[0].id)
+    const [searchReference, setSearchReference] = useState<string>("");
 
+    useEffect(() => {
+        if (results.length > 0) {
+            setSearchReference(results[0].from);
+        }
+    }, [results]);
+
+    const combinedItems = [...words, ...decription]
     return (
         <>
 
@@ -158,26 +164,15 @@ export default function AutoComplete() {
             </div>
             <div>
                 {error && <p style={{ color: "red" }}>{error}</p>}
-
-
                 {
                     results.length > 0 ? (
-                        results[0].from === "word" ?
-                            results.map((result, i) => (
-                                <AnswerCard key={i}
-                                    word={result.name}
-                                    definition={result.definition}
-                                />
-                            ))
-                            // <p>From word</p>
-                            :
-                            results.map((result, i) => (
-                                <AnswerCard key={i}
-                                    word={result.definition}
-                                    definition={result.name}
-                                />
-                            ))
-                        // <p>From defiition</p>
+                        results.map((result, i) => (
+                            <AnswerCard key={i}
+                                word={result.name}
+                                definition={result.definition}
+                                from={searchReference}
+                            />
+                        ))
                     ) : (
                         <div></div>
                     )
