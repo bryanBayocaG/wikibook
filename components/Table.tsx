@@ -247,9 +247,6 @@ export default function TableFinalForm() {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        {/* <Button color="primary" endContent={<PlusIcon />}>
-                            Add New
-                        </Button> */}
                         <ModalButton name={"Add a word"} />
                     </div>
                 </div>
