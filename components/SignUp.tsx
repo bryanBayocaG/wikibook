@@ -29,7 +29,7 @@ export function SignupForm() {
             const userImg = userCredential.user.photoURL;
             const userEmail = userCredential.user.email;
             const userName = userCredential.user.displayName;
-            console.log('User ID:', userId);
+            // console.log('User ID:', userId);
             currentOn(userId, userImg, userEmail, userName)
         }
     };

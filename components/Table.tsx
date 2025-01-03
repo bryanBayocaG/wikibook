@@ -18,12 +18,13 @@ import {
     SortDescriptor,
 } from "@nextui-org/react";
 import ModalButton from "./ui/Modal";
-import { collection } from "@firebase/firestore";
+import { collection, deleteDoc, doc } from "@firebase/firestore";
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { db } from "@/utils/firebase";
 import { ChevronDownIcon, SearchIcon, VerticalDotsIcon } from "./ui/TableSVG";
 import { useAuthStore } from "@/app/store";
 import { Capitalize } from "./AnswerCard";
+import { toast } from "react-toastify";
 
 
 export function capitalize(s: string) {
@@ -55,7 +56,19 @@ export default function TableFinalForm() {
     const currentAuth = useAuthStore((state) => state.currentAuth)
     const currentAuthId = useAuthStore((state) => state.currentAuthId)
     const query = currentAuth ? collection(db, `Users/${currentAuthId}/wordsAndDef`) : null;
+    const path = `Users/${currentAuthId}/wordsAndDef`;
     const [value,] = useCollection(query);
+
+
+    //para di mag close modal sa edit
+    const [dontClose, setDontClose] = useState(false)
+    const handleEditClick = () => {
+        setTimeout(() => {
+            setDontClose(true)
+        }, 50);
+
+        // console.log(`napindot`);
+    };
 
     const defaultWords = useMemo(() => [
         {
@@ -85,9 +98,16 @@ export default function TableFinalForm() {
 
     useEffect(() => {
         if (!currentAuth) {
-            setWords(defaultWords); // Reset to default words when currentAuth is false
+            setWords(defaultWords);
         }
     }, [currentAuth, defaultWords]);
+
+    const deleteWord = async (id: string) => {
+        const thatword = doc(db, path, id);
+        await deleteDoc(thatword).then(() => { toast.success(`${Capitalize(id)} has been deleted.`) });
+    }
+
+
 
 
 
@@ -161,17 +181,21 @@ export default function TableFinalForm() {
 
             case "actions":
                 return (
-                    <div className="relative flex justify-end items-center gap-2">
+                    <div className="relative flex justify-end items-center gap-2 ">
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button isIconOnly size="sm" variant="light">
                                     <VerticalDotsIcon className="text-default-300" />
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu>
+                            <DropdownMenu closeOnSelect={dontClose} >
                                 <DropdownItem key="view">View</DropdownItem>
-                                <DropdownItem key="edit">Edit</DropdownItem>
-                                <DropdownItem key="delete">Delete</DropdownItem>
+                                <DropdownItem key="edit">
+                                    <ModalButton name={"Edit a word"} id={word.word} onEdit={handleEditClick} />
+                                </DropdownItem>
+                                <DropdownItem key="delete" onPress={() => (deleteWord(word.word))}>
+                                    Delete
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>

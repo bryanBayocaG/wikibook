@@ -16,7 +16,7 @@ import { SignupForm } from "../SignUp";
 import { CiUser } from "react-icons/ci";
 import { toast } from 'react-toastify';
 import { useAuthStore } from "@/app/store";
-import { doc, getDoc, setDoc } from "@firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "@firebase/firestore";
 import { db } from "@/utils/firebase";
 import { Capitalize } from "../AnswerCard";
 
@@ -24,9 +24,13 @@ import { Capitalize } from "../AnswerCard";
 
 interface Props {
     name: string;
+    id?: string;
+    word?: string;
+    definition?: string;
+    onEdit?: () => void;
 }
 
-export default function ModalButton({ name }: Props) {
+export default function ModalButton({ name, id, word, definition, onEdit }: Props) {
     const wordRef = useRef<HTMLInputElement>(null)
     const definitionRef = useRef<HTMLTextAreaElement>(null)
     const { theme } = useTheme();
@@ -38,15 +42,25 @@ export default function ModalButton({ name }: Props) {
     const [currentUsage, setCurrentUsage] = useState("");
 
     useEffect(() => {
-        if (name === "Sign In") {
-            setCurrentUsage("signIn")
-        } else {
-            setCurrentUsage("addWord")
+        switch (name) {
+            case "Sign In":
+                setCurrentUsage("signIn");
+                break;
+            case "Add a word":
+                setCurrentUsage("addWord");
+                break;
+            case "Edit a word":
+                setCurrentUsage("editWord");
+                break;
         }
+
     }, [name])
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const handleOpen = () => {
+        if (onEdit) {
+            onEdit();
+        }
         onOpen();
     };
 
@@ -84,24 +98,38 @@ export default function ModalButton({ name }: Props) {
         }
     };
 
+    const editWord = async () => {
+        const wordValue = wordRef ? wordRef?.current?.value.toLowerCase() : "";
+        const definitionValue = definitionRef ? definitionRef?.current?.value.toLowerCase() : "";
+        const thatword = doc(db, path, id);
+        await updateDoc(thatword, { name: wordValue, definiion: definitionValue }).then(() => { toast.success(`${Capitalize(wordValue)} has been deleted.`) });
+    }
+
     return (
         <>
             <div className="flex flex-wrap gap-3">
-                <Button
+                {currentUsage === "editWord" ?
+                    <button onClick={() => handleOpen()}>Edit</button>
+                    :
+                    <Button
 
-                    className="capitalize"
-                    color={currentUsage === "addWord" ? "primary" : undefined}
-                    variant="flat"
-                    endContent={currentUsage === "addWord" ? <PlusIcon /> : <CiUser />}
-                    onPress={() => handleOpen()}
-                >
-                    {name}
-                </Button>
+                        className="capitalize w-full"
+                        color={currentUsage === "addWord" ? "primary" : undefined}
+                        variant="flat"
+                        endContent={currentUsage === "addWord" ? <PlusIcon /> : <CiUser />}
+                        onPress={() => handleOpen()}
+                    >
+                        {name}
+                    </Button>
+                }
+
             </div>
             <Modal backdrop="blur" isOpen={isOpen} size="5xl" onClose={onClose}>
                 <ModalContent>
                     <>
-                        {currentUsage === "signIn" || !currentAuth ? <SignupForm /> :
+                        {currentUsage === "signIn" || !currentAuth ? (
+                            <SignupForm />
+                        ) : currentUsage === "addWord" ? (
                             <>
                                 <ModalHeader className="flex flex-col gap-1">Add more Words and definitioin</ModalHeader>
                                 <form onSubmit={handleSubmit}>
@@ -132,7 +160,42 @@ export default function ModalButton({ name }: Props) {
                                     </ModalFooter>
                                 </form>
                             </>
-                        }
+                        ) : currentUsage === "editWord" ? (
+                            <>
+                                <ModalHeader className="flex flex-col gap-1">Edit the Word and definition</ModalHeader>
+                                <form onSubmit={editWord}>
+
+                                    <ModalBody>
+                                        <Input
+                                            label="Word"
+                                            placeholder="Enter a word"
+                                            variant="bordered"
+                                            ref={wordRef}
+                                            value={word ? word : ""}
+                                        />
+                                        <Textarea
+                                            ref={definitionRef}
+                                            value={definition ? definition : ""}
+                                            className="col-span-12 md:col-span-6 mb-6 md:mb-0 text-white"
+                                            style={{ color: theme === "dark" ? "white" : "black" }}
+                                            labelPlacement="outside"
+                                            placeholder="Enter your description"
+                                            variant="underlined"
+                                        />
+                                    </ModalBody>
+                                    <ModalFooter>
+                                        <Button color="danger" variant="light" onPress={onClose}>
+                                            Close
+                                        </Button>
+                                        <Button type="submit" color="primary">
+                                            Apply changes
+                                        </Button>
+                                    </ModalFooter>
+                                </form>
+                            </>
+                        ) : (
+                            <div></div>
+                        )}
                     </>
                 </ModalContent>
             </Modal>

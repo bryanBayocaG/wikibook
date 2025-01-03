@@ -9,7 +9,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import UserIcon from "../UserIcon";
 import ModalButton from "./Modal";
-import { useAuthStore } from "@/app/store";
+import { useAuthStore, useThemeStore } from "@/app/store";
 
 const ModeSwitchNoSSR = dynamic(
     () => import('@/components/ModeSwitch'),
@@ -24,6 +24,7 @@ export const FloatingNav = ({
     const visible = true;
     const itsZero = false;
     const currentAuth = useAuthStore((state) => state.currentAuth)
+    const currentTheme = useThemeStore((state) => state.theme)
     return (
         <AnimatePresence mode="wait">
             <motion.div
@@ -43,15 +44,16 @@ export const FloatingNav = ({
                     className
                 )}
             >
-                <Link href="/" className={cn("w-6/12 items-center flex")}>
+                <Link href="/" className={cn("w-4/12 items-center flex")}>
                     <Image
-                        width={28}
+                        width={0}
                         height={0}
                         unoptimized
-                        className=" w-28"
-                        src="/BryanLogo.png"
+                        className=" w-16 -rotate-12"
+                        src={currentTheme === "dark" ? "/wki black.svg" : "/wki white.svg"}
                         alt="Logo"
                     />
+                    <p className="mx-3 font-bold hidden md:block rotate-6">WikiPok</p>
                 </Link>
                 <div className="invisible-space w-6/12"></div>
                 <ModeSwitchNoSSR />
