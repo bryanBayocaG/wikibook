@@ -14,7 +14,6 @@ const ModeSwitch = () => {
 
 
     useEffect(() => {
-        // setTheme(isOn ? 'light' : 'dark');
         if (isOn) {
             setTheme("light");
             themeLight();

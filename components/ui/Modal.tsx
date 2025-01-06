@@ -16,7 +16,7 @@ import { SignupForm } from "../SignUp";
 import { CiUser } from "react-icons/ci";
 import { toast } from 'react-toastify';
 import { useAuthStore } from "@/app/store";
-import { doc, getDoc, setDoc, updateDoc } from "@firebase/firestore";
+import { addDoc, collection } from "@firebase/firestore";
 import { db } from "@/utils/firebase";
 import { Capitalize } from "../AnswerCard";
 
@@ -30,7 +30,7 @@ interface Props {
     onEdit?: () => void;
 }
 
-export default function ModalButton({ name, id, word, definition, onEdit }: Props) {
+export default function ModalButton({ name, onEdit }: Props) {
     const wordRef = useRef<HTMLInputElement>(null)
     const definitionRef = useRef<HTMLTextAreaElement>(null)
     const { theme } = useTheme();
@@ -74,13 +74,13 @@ export default function ModalButton({ name, id, word, definition, onEdit }: Prop
                 toast.error("Please fill in both fields.");
                 return;
             }
-            const docRef = doc(db, path, wordValue)
-            const docSnapshot = await getDoc(docRef);
-            if (docSnapshot.exists()) {
-                toast.error(`The word "${Capitalize(wordValue)}" already exists.`);
-                return;
-            }
-            await setDoc(docRef, {
+            const docRef = collection(db, path)
+            // const docSnapshot = await getDoc(docRef);
+            // if (docSnapshot.exists()) {
+            //     toast.error(`The word "${Capitalize(wordValue)}" already exists.`);
+            //     return;
+            // }
+            await addDoc(docRef, {
                 definition: definitionValue,
                 name: wordValue,
             }).then(() => {
@@ -97,13 +97,6 @@ export default function ModalButton({ name, id, word, definition, onEdit }: Prop
             }
         }
     };
-
-    const editWord = async () => {
-        const wordValue = wordRef ? wordRef?.current?.value.toLowerCase() : "";
-        const definitionValue = definitionRef ? definitionRef?.current?.value.toLowerCase() : "";
-        const thatword = doc(db, path, id);
-        await updateDoc(thatword, { name: wordValue, definiion: definitionValue }).then(() => { toast.success(`${Capitalize(wordValue)} has been deleted.`) });
-    }
 
     return (
         <>
@@ -156,39 +149,6 @@ export default function ModalButton({ name, id, word, definition, onEdit }: Prop
                                         </Button>
                                         <Button type="submit" color="primary">
                                             Add the word
-                                        </Button>
-                                    </ModalFooter>
-                                </form>
-                            </>
-                        ) : currentUsage === "editWord" ? (
-                            <>
-                                <ModalHeader className="flex flex-col gap-1">Edit the Word and definition</ModalHeader>
-                                <form onSubmit={editWord}>
-
-                                    <ModalBody>
-                                        <Input
-                                            label="Word"
-                                            placeholder="Enter a word"
-                                            variant="bordered"
-                                            ref={wordRef}
-                                            value={word ? word : ""}
-                                        />
-                                        <Textarea
-                                            ref={definitionRef}
-                                            value={definition ? definition : ""}
-                                            className="col-span-12 md:col-span-6 mb-6 md:mb-0 text-white"
-                                            style={{ color: theme === "dark" ? "white" : "black" }}
-                                            labelPlacement="outside"
-                                            placeholder="Enter your description"
-                                            variant="underlined"
-                                        />
-                                    </ModalBody>
-                                    <ModalFooter>
-                                        <Button color="danger" variant="light" onPress={onClose}>
-                                            Close
-                                        </Button>
-                                        <Button type="submit" color="primary">
-                                            Apply changes
                                         </Button>
                                     </ModalFooter>
                                 </form>

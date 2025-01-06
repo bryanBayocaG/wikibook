@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import {
     Table,
     TableHeader,
@@ -16,9 +16,16 @@ import {
     Pagination,
     Selection,
     SortDescriptor,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
+    Textarea,
 } from "@nextui-org/react";
 import ModalButton from "./ui/Modal";
-import { collection, deleteDoc, doc } from "@firebase/firestore";
+import { collection, deleteDoc, doc, updateDoc } from "@firebase/firestore";
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { db } from "@/utils/firebase";
 import { ChevronDownIcon, SearchIcon, VerticalDotsIcon } from "./ui/TableSVG";
@@ -27,13 +34,23 @@ import { Capitalize } from "./AnswerCard";
 import { toast } from "react-toastify";
 
 
+const AuthState = useAuthStore.getState().currentAuth;
+
+let INITIAL_VISIBLE_COLUMNS: string[] = [];
+
+if (AuthState) {
+    INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"]
+} else {
+    INITIAL_VISIBLE_COLUMNS = ["word", "definition"]
+}
+
+// const INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"]
 export function capitalize(s: string) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
 export const columns = [
-    { name: "ID", uid: "id", sortable: true },
     { name: "WORD", uid: "word", sortable: true },
-    { name: "DEFINITION", uid: "definition" },
+    { name: "DEFINITION", uid: "definition", sortable: true },
     { name: "ACTIONS", uid: "actions" },
 ];
 export const statusOptions = [
@@ -42,15 +59,13 @@ export const statusOptions = [
     { name: "Vacation", uid: "vacation" },
 ];
 
-
-
-const INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"];
-
 type Word = {
     id: number;
     word: string;
     definition: string;
+    identity: string;
 };
+
 
 export default function TableFinalForm() {
     const currentAuth = useAuthStore((state) => state.currentAuth)
@@ -59,36 +74,34 @@ export default function TableFinalForm() {
     const path = `Users/${currentAuthId}/wordsAndDef`;
     const [value,] = useCollection(query);
 
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    //para di mag close modal sa edit
-    const [dontClose, setDontClose] = useState(false)
-    const handleEditClick = () => {
-        setTimeout(() => {
-            setDontClose(true)
-        }, 50);
-
-        // console.log(`napindot`);
-    };
 
     const defaultWords = useMemo(() => [
         {
             id: 0,
             word: "Bryan Bayoca",
+            identity: "Bryan Bayoca",
             definition: "A fresh grad web developer who created this app.",
         },
         {
             id: 1,
             word: "WikiPok",
+            identity: "WikiPok",
             definition: "A mobile responsive web app that acts as a personal library for words and definitions where users can add words with definitions and can get the definition of it or vice versa.",
         }
     ], []);
 
-    const [words, setWords] = useState<Word[]>(defaultWords);
+    const [words, setWords] = useState(defaultWords);
+    const [currentID, setCurrentID] = useState("");
+    const [currentWord, setCurrentWord] = useState("");
+    const [currentDefinition, setCurrentDefinition] = useState("");
 
     useEffect(() => {
         if (value) {
             const newWords: Word[] = value.docs.map((doc, i) => ({
                 id: i,
+                identity: doc.id,
                 word: doc.data().name || "", // Default empty string for safety
                 definition: doc.data().definition || "", // Default empty string for safety
             }));
@@ -96,21 +109,28 @@ export default function TableFinalForm() {
         }
     }, [value]);
 
+    const wordRef = useRef<HTMLInputElement>(null)
+    const definitionRef = useRef<HTMLTextAreaElement>(null)
+
+    const editWord = async () => {
+        const thatword = doc(db, path, currentID);
+        await updateDoc(thatword, { name: currentWord, definition: currentDefinition })
+            .then(() => { toast.success(`${Capitalize(currentWord)} has been updated.`) });
+
+        setCurrentWord("")
+        setCurrentDefinition("");
+    }
+
     useEffect(() => {
         if (!currentAuth) {
             setWords(defaultWords);
         }
     }, [currentAuth, defaultWords]);
 
-    const deleteWord = async (id: string) => {
+    const deleteWord = async (id: string, name: string) => {
         const thatword = doc(db, path, id);
-        await deleteDoc(thatword).then(() => { toast.success(`${Capitalize(id)} has been deleted.`) });
+        await deleteDoc(thatword).then(() => { toast.success(`${Capitalize(name)} has been deleted.`) });
     }
-
-
-
-
-
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
@@ -181,24 +201,35 @@ export default function TableFinalForm() {
 
             case "actions":
                 return (
-                    <div className="relative flex justify-end items-center gap-2 ">
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu closeOnSelect={dontClose} >
-                                <DropdownItem key="view">View</DropdownItem>
-                                <DropdownItem key="edit">
-                                    <ModalButton name={"Edit a word"} id={word.word} onEdit={handleEditClick} />
-                                </DropdownItem>
-                                <DropdownItem key="delete" onPress={() => (deleteWord(word.word))}>
-                                    Delete
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
+                    <>
+
+                        <div className={`relative flex justify-end items-center gap-2 ${currentAuth ? "block" : "hidden"}`}>
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button isIconOnly size="sm" variant="light">
+                                        <VerticalDotsIcon className="text-default-300" />
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu>
+                                    <DropdownItem key="edit"
+                                        onPress={() => {
+                                            onOpen();
+                                            setCurrentID(word.identity);
+                                            setCurrentWord(word.word);
+                                            setCurrentDefinition(word.definition);
+                                        }}
+                                    >
+                                        Edit
+                                    </DropdownItem>
+                                    <DropdownItem key="delete" onPress={() => (deleteWord(word.identity, word.word))}>
+                                        Delete
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </div>
+
+
+                    </>
                 );
             default:
                 return cellValue;
@@ -329,40 +360,82 @@ export default function TableFinalForm() {
     }, [selectedKeys, page, pages, filteredItems.length, onNextPage, onPreviousPage]);
 
     return (
-        <Table
-            isHeaderSticky
-            aria-label="Example table with custom cells, pagination and sorting"
-            bottomContent={bottomContent}
-            bottomContentPlacement="outside"
-            classNames={{
-                wrapper: "max-h-[382px]",
-            }}
-            selectedKeys={selectedKeys}
-            selectionMode="multiple"
-            sortDescriptor={sortDescriptor}
-            topContent={topContent}
-            topContentPlacement="outside"
-            onSelectionChange={setSelectedKeys}
-            onSortChange={setSortDescriptor}
-        >
-            <TableHeader columns={headerColumns}>
-                {(column) => (
-                    <TableColumn
-                        key={column.uid}
-                        align={column.uid === "actions" ? "center" : "start"}
-                        allowsSorting={column.sortable}
-                    >
-                        {column.name}
-                    </TableColumn>
-                )}
-            </TableHeader>
-            <TableBody emptyContent={"No words found"} items={sortedItems}>
-                {(item) => (
-                    <TableRow key={item.id}>
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+        <>
+            <Table
+
+                isHeaderSticky
+                aria-label="Example table with custom cells, pagination and sorting"
+                bottomContent={bottomContent}
+                bottomContentPlacement="outside"
+                classNames={{
+                    wrapper: "max-h-[382px]",
+                }}
+                selectedKeys={selectedKeys}
+                selectionMode="multiple"
+                sortDescriptor={sortDescriptor}
+                topContent={topContent}
+                topContentPlacement="outside"
+                onSelectionChange={setSelectedKeys}
+                onSortChange={setSortDescriptor}
+            >
+                <TableHeader columns={headerColumns}>
+                    {(column) => (
+                        <TableColumn
+                            key={column.uid}
+                            align={column.uid === "actions" ? "center" : "start"}
+                            allowsSorting={column.sortable}
+                        >
+                            {column.name}
+                        </TableColumn>
+                    )}
+                </TableHeader>
+                <TableBody emptyContent={"No words found"} items={sortedItems}>
+                    {(item) => (
+                        <TableRow key={item.id}>
+                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+
+            <Modal isOpen={isOpen} isDismissable={false} onOpenChange={onOpenChange}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+                            <ModalBody>
+                                <div className="flex flex-col w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
+                                    <Input label="Word" type="text" variant="bordered"
+                                        defaultValue={currentWord}
+                                        ref={wordRef}
+                                        onChange={(e) => setCurrentWord(e.target.value)}
+                                        required />
+                                    <Textarea
+                                        isClearable
+                                        className="w-full"
+                                        defaultValue={currentDefinition}
+                                        label="Definition"
+                                        placeholder="Definition"
+                                        variant="bordered"
+                                        ref={definitionRef}
+                                        onChange={(e) => setCurrentDefinition(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="danger" variant="light" onPress={onClose}>
+                                    Close
+                                </Button>
+                                <Button color="primary" onPress={() => { editWord(); onClose(); }}>
+                                    Apply
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+
+        </>
     );
 }
