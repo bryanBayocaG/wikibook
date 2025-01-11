@@ -16,7 +16,7 @@ import { SignupForm } from "../SignUp";
 import { CiUser } from "react-icons/ci";
 import { toast } from 'react-toastify';
 import { useAuthStore } from "@/app/store";
-import { addDoc, collection } from "@firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "@firebase/firestore";
 import { db } from "@/utils/firebase";
 import { Capitalize } from "../AnswerCard";
 
@@ -74,12 +74,14 @@ export default function ModalButton({ name, onEdit }: Props) {
                 toast.error("Please fill in both fields.");
                 return;
             }
+
             const docRef = collection(db, path)
-            // const docSnapshot = await getDoc(docRef);
-            // if (docSnapshot.exists()) {
-            //     toast.error(`The word "${Capitalize(wordValue)}" already exists.`);
-            //     return;
-            // }
+            const querySnapshot = await getDocs(query(docRef, where("name", "==", wordValue)));
+            if (!querySnapshot.empty) {
+                toast.error(`The word "${wordValue}" already exists.`);
+                return;
+            }
+
             await addDoc(docRef, {
                 definition: definitionValue,
                 name: wordValue,
