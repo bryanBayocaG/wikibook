@@ -60,10 +60,9 @@ export default function UserIcon() {
                     </div>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="User Actions" variant="flat">
-                    <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-                    <DropdownItem key="logout" color="danger">
-                        <button onClick={HandleSignOut}>Log Out</button>
-
+                    {/* <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem> */}
+                    <DropdownItem key="logout" color="danger" onPress={HandleSignOut}>
+                        Log Out
                     </DropdownItem>
                 </DropdownMenu>
             </Dropdown>

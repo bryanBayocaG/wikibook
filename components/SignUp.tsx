@@ -1,10 +1,10 @@
 "use client";
-import React, { useRef, useState } from "react";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { cn } from "@/lib/utils";
+import React, { /* useRef, */ useState } from "react";
+// import { Label } from "./ui/label";
+// import { Input } from "./ui/input";
+// import { cn } from "@/lib/utils";
 import { FcGoogle } from "react-icons/fc";
-import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { /* createUserWithEmailAndPassword, */ signInWithPopup } from "firebase/auth";
 import { auth, db, googleProvider } from "@/utils/firebase";
 import { doc, setDoc } from "@firebase/firestore"
 import { useAuthStore } from "@/app/store";
@@ -14,25 +14,25 @@ import { toast } from 'react-toastify';
 
 
 export function SignupForm() {
-    const [noAcc, setnoAcc] = useState(false);
+    const [noAcc/* , setnoAcc */] = useState(false);
 
     const currentOn = useAuthStore((state) => state.currentOn)
-    const emailRef = useRef<HTMLInputElement>(null);
-    const passwordRef = useRef<HTMLInputElement>(null);
-    console.log("hello", auth.currentUser?.email)
+    // const emailRef = useRef<HTMLInputElement>(null);
+    // const passwordRef = useRef<HTMLInputElement>(null);
+    // console.log("hello", auth.currentUser?.email)
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (emailRef.current && passwordRef.current) {
-            const userCredential = await createUserWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
-            const userId = userCredential.user.uid;
-            const userImg = userCredential.user.photoURL;
-            const userEmail = userCredential.user.email;
-            const userName = userCredential.user.displayName;
-            // console.log('User ID:', userId);
-            currentOn(userId, userImg, userEmail, userName)
-        }
-    };
+    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault();
+    //     if (emailRef.current && passwordRef.current) {
+    //         const userCredential = await createUserWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value);
+    //         const userId = userCredential.user.uid;
+    //         const userImg = userCredential.user.photoURL;
+    //         const userEmail = userCredential.user.email;
+    //         const userName = userCredential.user.displayName;
+    //         // console.log('User ID:', userId);
+    //         currentOn(userId, userImg, userEmail, userName)
+    //     }
+    // };
 
     const handleGoogleSignIn = async () => {
         try {
@@ -62,7 +62,7 @@ export function SignupForm() {
                 {`${!noAcc ? "Create account" : "Login"} to add your own words and definitions.`}
             </p>
 
-            <form className="my-8" onSubmit={handleSubmit}>
+            {/* <form className="my-8" onSubmit={handleSubmit}>
                 <LabelInputContainer className="mb-4">
                     <Label htmlFor="email">Email Address</Label>
                     <Input id="email" ref={emailRef} placeholder="projectmayhem@fc.com" type="email" />
@@ -79,8 +79,8 @@ export function SignupForm() {
                     {`${noAcc ? "Log in " : "Sign Up"}`}
                     <BottomGradient />
                 </button>
-            </form>
-            <div className="flex mt-5 justify-center">
+            </form> */}
+            {/* <div className="flex mt-5 justify-center">
                 {
                     noAcc ?
                         <button
@@ -106,7 +106,7 @@ export function SignupForm() {
                         </button>
                 }
 
-            </div>
+            </div> */}
 
             <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
             <div className="flex flex-col space-y-4">
@@ -136,7 +136,7 @@ const BottomGradient = () => {
     );
 };
 
-const LabelInputContainer = ({
+/* const LabelInputContainer = ({
     children,
     className,
 }: {
@@ -148,4 +148,4 @@ const LabelInputContainer = ({
             {children}
         </div>
     );
-};
+}; */
