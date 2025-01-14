@@ -28,23 +28,11 @@ import ModalButton from "./ui/Modal";
 import { collection, deleteDoc, doc, updateDoc } from "@firebase/firestore";
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { db } from "@/utils/firebase";
-import { ChevronDownIcon, SearchIcon, VerticalDotsIcon } from "./ui/TableSVG";
+import { SearchIcon, VerticalDotsIcon } from "./ui/TableSVG";
 import { useAuthStore } from "@/app/store";
 import { Capitalize } from "./AnswerCard";
 import { toast } from "react-toastify";
 
-
-const AuthState = useAuthStore.getState().currentAuth;
-
-let INITIAL_VISIBLE_COLUMNS: string[] = [];
-
-if (AuthState) {
-    INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"]
-} else {
-    INITIAL_VISIBLE_COLUMNS = ["word", "definition"]
-}
-
-// const INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"]
 export function capitalize(s: string) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
@@ -133,9 +121,21 @@ export default function TableFinalForm() {
     }
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
-    const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-        new Set(INITIAL_VISIBLE_COLUMNS),
-    );
+
+
+    // const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
+    //     new Set(INITIAL_VISIBLE_COLUMNS),
+    // );
+    const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (currentAuth) {
+            setVisibleColumns(["word", "definition", "actions"]);
+        } else {
+            setVisibleColumns(["word", "definition"]);
+        }
+    }, [currentAuth]);
+
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
         column: "word",
@@ -147,7 +147,7 @@ export default function TableFinalForm() {
     const hasSearchFilter = Boolean(filterValue);
 
     const headerColumns = React.useMemo(() => {
-        if (visibleColumns === "all") return columns;
+        // if (visibleColumns === "all") return columns;
 
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
@@ -281,27 +281,6 @@ export default function TableFinalForm() {
                         onValueChange={onSearchChange}
                     />
                     <div className="flex gap-3">
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                                    Columns
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                disallowEmptySelection
-                                aria-label="Table Columns"
-                                closeOnSelect={false}
-                                selectedKeys={visibleColumns}
-                                selectionMode="multiple"
-                                onSelectionChange={setVisibleColumns}
-                            >
-                                {columns.map((column) => (
-                                    <DropdownItem key={column.uid} className="capitalize">
-                                        {capitalize(column.name)}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
                         <ModalButton name={"Add a word"} />
                     </div>
                 </div>
@@ -370,8 +349,8 @@ export default function TableFinalForm() {
                 classNames={{
                     wrapper: "max-h-[382px]",
                 }}
-                selectedKeys={selectedKeys}
-                selectionMode="multiple"
+                // selectedKeys={selectedKeys}
+                // selectionMode="multiple"
                 sortDescriptor={sortDescriptor}
                 topContent={topContent}
                 topContentPlacement="outside"

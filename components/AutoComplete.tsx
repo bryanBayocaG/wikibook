@@ -7,6 +7,7 @@ import { Button } from "@nextui-org/react";
 import { useEffect, useRef, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { Chip } from "@nextui-org/react";
+import { IoSearch } from "react-icons/io5";
 import AnswerCard from "./AnswerCard";
 
 type Word = {
@@ -140,11 +141,14 @@ export default function AutoComplete() {
     return (
         <>
 
-            <div className="relative p-1 flex">
+            <div className="relative w-full p-1 flex gap-3">
+                <div className="w-1/12">
+
+                </div>
                 <Autocomplete
                     ref={searchRef}
                     allowsCustomValue
-                    className="w-full"
+                    className="w-9/12"
                     defaultItems={combinedItems}
                     label="Search a word or description..."
                     variant="bordered"
@@ -157,12 +161,14 @@ export default function AutoComplete() {
                     }
 
                 </Autocomplete>
-                <div className="absolute bottom-0 rounded-2xl h-full w-28 bg-transparent right-0">
-                    <Button className="w-full h-full" onPress={() => onSearchClick()} color="primary">Search</Button>
+                <div className="rounded-2xl h-full w-1/12 md:w-28 bg-transparent right-0">
+                    <Button className="w-full h-14" onPress={() => onSearchClick()} color="primary">
+                        <IoSearch className="w-5 h-5 md:w-10 md:h-10" />
+                    </Button>
+                </div>
+                <div className="w-1/12">
 
                 </div>
-
-
             </div>
             <div>
                 {error &&

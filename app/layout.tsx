@@ -38,8 +38,6 @@ export default function RootLayout({
         <Alert />
         <ThemeProvider attribute="class">
           <Providers>
-            {/* <ToastContainer /> */}
-
             {children}
           </Providers>
         </ThemeProvider>

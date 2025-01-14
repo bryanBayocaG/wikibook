@@ -1,5 +1,6 @@
 "use client";
-import React, { /* useRef, */ useState } from "react";
+import React, { /* useRef, */ useState, } from "react";
+import { useRouter } from 'next/navigation';
 // import { Label } from "./ui/label";
 // import { Input } from "./ui/input";
 // import { cn } from "@/lib/utils";
@@ -14,6 +15,7 @@ import { toast } from 'react-toastify';
 
 
 export function SignupForm() {
+    const router = useRouter()
     const [noAcc/* , setnoAcc */] = useState(false);
 
     const currentOn = useAuthStore((state) => state.currentOn)
@@ -46,6 +48,7 @@ export function SignupForm() {
                 toast.success("Login successfully");
             })
             currentOn(userId, userImg, userEmail, userName)
+            router.push('/')
 
         } catch (error) {
             console.log("error", error);
