@@ -62,7 +62,7 @@ export default function UserIcon() {
                 <DropdownMenu aria-label="User Actions" variant="flat">
                     {/* <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem> */}
                     <DropdownItem key="logout" color="danger" onPress={HandleSignOut}>
-                        Log Out
+                        Log Ou
                     </DropdownItem>
                 </DropdownMenu>
             </Dropdown>
