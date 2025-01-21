@@ -30,11 +30,6 @@ interface Props {
     onEdit?: () => void;
 
 }
-export function PleaseClose() {
-    // const { onClose } = useDisclosure();
-    // onClose()
-    console.log("yepey")
-}
 
 
 
@@ -64,6 +59,10 @@ export default function ModalButton({ name, onEdit }: Props) {
 
     }, [name])
 
+    useEffect(() => {
+
+    }, [])
+
     const { isOpen, onOpen, onClose } = useDisclosure();
     const handleOpen = () => {
         if (onEdit) {
@@ -71,6 +70,12 @@ export default function ModalButton({ name, onEdit }: Props) {
         }
         onOpen();
     };
+    //close modal pag nag login sa add word
+    useEffect(() => {
+        if (currentAuth) {
+            onClose();
+        }
+    }, [currentAuth, onClose])
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();

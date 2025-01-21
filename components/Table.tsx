@@ -81,6 +81,12 @@ export default function TableFinalForm() {
             setWords(newWords);
         }
     }, [value]);
+    useEffect(() => {
+        if (!currentAuth) {
+            setWords([])
+        }
+
+    }, [currentAuth])
 
     const wordRef = useRef<HTMLInputElement>(null)
     const definitionRef = useRef<HTMLTextAreaElement>(null)

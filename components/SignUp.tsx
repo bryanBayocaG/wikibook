@@ -6,7 +6,6 @@ import { auth, db, googleProvider } from "@/utils/firebase";
 import { doc, setDoc } from "@firebase/firestore"
 import { useAuthStore } from "@/app/store";
 import { toast } from 'react-toastify';
-import { PleaseClose } from "./ui/Modal";
 
 
 
@@ -44,7 +43,6 @@ export function SignupForm() {
                 toast.success("Login successfully");
             })
             currentOn(userId, userImg, userEmail, userName)
-            PleaseClose()
         } catch (error) {
             console.log("error", error);
         }
