@@ -2,11 +2,11 @@
 import { useAuthStore } from "@/app/store";
 import { db } from "@/utils/firebase";
 import { collection, query, where, getDocs } from "@firebase/firestore";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import { Button } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { useEffect, useRef, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { Chip } from "@nextui-org/react";
+import { Chip } from "@heroui/react";
 import { IoSearch } from "react-icons/io5";
 import AnswerCard from "./AnswerCard";
 
@@ -140,7 +140,6 @@ export default function AutoComplete() {
     const combinedItems = [...words, ...decription]
     return (
         <>
-
             <div className="relative w-full p-1 flex gap-3">
                 <div className="w-1/12">
 
@@ -159,11 +158,10 @@ export default function AutoComplete() {
                             {item.label}
                         </AutocompleteItem>
                     }
-
                 </Autocomplete>
                 <div className="rounded-2xl h-full w-1/12 md:w-28 bg-transparent right-0">
-                    <Button className="w-full h-14" onPress={() => onSearchClick()} color="primary">
-                        <IoSearch className="w-5 h-5 md:w-10 md:h-10" />
+                    <Button color="warning" className="w-full h-14" onPress={() => onSearchClick()} >
+                        <IoSearch className="w-5 h-5 md:w-10 md:h-10 dark:text-white" />
                     </Button>
                 </div>
                 <div className="w-1/12">

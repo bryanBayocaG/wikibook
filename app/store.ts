@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type ThemeStore = {
-  theme: string;
+  themeIsDark: boolean;
   themeDark: () => void;
   themeLight: () => void;
 };
@@ -22,20 +22,18 @@ type AuthStore = {
   ) => void;
 };
 
-// type ThemePersist = PersistOptions<ThemeStore>;
-
 export const useThemeStore = create<
   ThemeStore,
   [["zustand/persist", ThemeStore]]
 >(
   persist(
     (set) => ({
-      theme: "dark",
+      themeIsDark: true,
       themeDark: () => {
-        set({ theme: "dark" });
+        set({ themeIsDark: true });
       },
       themeLight: () => {
-        set({ theme: "light" });
+        set({ themeIsDark: false });
       },
     }),
     {
@@ -72,10 +70,10 @@ export const useAuthStore = create<AuthStore, [["zustand/persist", AuthStore]]>(
       },
     }),
     {
-      name: "auth-store", // unique name for the storage
+      name: "auth-store",
     }
   )
 );
 
-// const currentTheme = useThemeStore((state) => state.theme)
+// const currentTheme = useThemeStore((state) => state.themeIsDark)
 // const currentAuth = useAuthStore((state) => state.currentAuth)

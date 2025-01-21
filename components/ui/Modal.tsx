@@ -9,7 +9,7 @@ import {
     useDisclosure,
     Input,
     Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { PlusIcon } from "./TableSVG";
 import { useTheme } from 'next-themes'
 import { SignupForm } from "../SignUp";
@@ -109,7 +109,7 @@ export default function ModalButton({ name, onEdit }: Props) {
                     <Button
 
                         className="capitalize w-full"
-                        color={currentUsage === "addWord" ? "primary" : undefined}
+                        color="warning"
                         variant="flat"
                         endContent={currentUsage === "addWord" ? <PlusIcon /> : <CiUser />}
                         onPress={() => handleOpen()}
@@ -117,7 +117,6 @@ export default function ModalButton({ name, onEdit }: Props) {
                         {name}
                     </Button>
                 }
-
             </div>
             <Modal backdrop="blur" isOpen={isOpen} size="5xl" onClose={onClose}>
                 <ModalContent>

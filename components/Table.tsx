@@ -23,7 +23,7 @@ import {
     ModalFooter,
     useDisclosure,
     Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import ModalButton from "./ui/Modal";
 import { collection, deleteDoc, doc, updateDoc } from "@firebase/firestore";
 import { useCollection } from 'react-firebase-hooks/firestore';
@@ -321,7 +321,7 @@ export default function TableFinalForm() {
                     isCompact
                     showControls
                     showShadow
-                    color="primary"
+                    color="warning"
                     page={page}
                     total={pages}
                     onChange={setPage}
