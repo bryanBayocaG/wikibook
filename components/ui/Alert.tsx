@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 const Alert = () => {
-    const currentTheme = useThemeStore((state) => state.theme)
+    const isItDark = useThemeStore((state) => state.themeIsDark)
     return (
         <ToastContainer
             position="top-center"
@@ -18,7 +18,7 @@ const Alert = () => {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme={currentTheme}
+            theme={isItDark ? "dark" : "light"}
             transition={Bounce}
         />
     )
