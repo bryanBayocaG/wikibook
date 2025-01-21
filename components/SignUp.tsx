@@ -1,21 +1,17 @@
 "use client";
 import React, { /* useRef, */ useState, } from "react";
-import { useRouter } from 'next/navigation';
-// import { Label } from "./ui/label";
-// import { Input } from "./ui/input";
-// import { cn } from "@/lib/utils";
 import { FcGoogle } from "react-icons/fc";
 import { /* createUserWithEmailAndPassword, */ signInWithPopup } from "firebase/auth";
 import { auth, db, googleProvider } from "@/utils/firebase";
 import { doc, setDoc } from "@firebase/firestore"
 import { useAuthStore } from "@/app/store";
 import { toast } from 'react-toastify';
+import { PleaseClose } from "./ui/Modal";
 
 
 
 
 export function SignupForm() {
-    const router = useRouter()
     const [noAcc/* , setnoAcc */] = useState(false);
 
     const currentOn = useAuthStore((state) => state.currentOn)
@@ -48,8 +44,7 @@ export function SignupForm() {
                 toast.success("Login successfully");
             })
             currentOn(userId, userImg, userEmail, userName)
-            router.push('/')
-
+            PleaseClose()
         } catch (error) {
             console.log("error", error);
         }

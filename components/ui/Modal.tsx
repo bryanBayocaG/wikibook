@@ -28,7 +28,15 @@ interface Props {
     word?: string;
     definition?: string;
     onEdit?: () => void;
+
 }
+export function PleaseClose() {
+    // const { onClose } = useDisclosure();
+    // onClose()
+    console.log("yepey")
+}
+
+
 
 export default function ModalButton({ name, onEdit }: Props) {
     const wordRef = useRef<HTMLInputElement>(null)

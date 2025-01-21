@@ -141,7 +141,7 @@ export default function AutoComplete() {
     return (
         <>
             <div className="relative w-full p-1 flex gap-3">
-                <div className="w-1/12">
+                <div className="hidden md:block w-1/12">
 
                 </div>
                 <Autocomplete
@@ -149,7 +149,7 @@ export default function AutoComplete() {
                     allowsCustomValue
                     className="w-9/12"
                     defaultItems={combinedItems}
-                    label="Search a word or description..."
+                    label="Word or description..."
                     variant="bordered"
                     required
                 >

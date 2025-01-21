@@ -36,6 +36,7 @@ import { toast } from "react-toastify";
 export function capitalize(s: string) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
+
 export const columns = [
     { name: "WORD", uid: "word", sortable: true },
     { name: "DEFINITION", uid: "definition", sortable: true },
@@ -53,7 +54,7 @@ type Word = {
     definition: string;
     identity: string;
 };
-
+const INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"];
 
 export default function TableFinalForm() {
     const currentAuth = useAuthStore((state) => state.currentAuth)
@@ -64,23 +65,7 @@ export default function TableFinalForm() {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-
-    const defaultWords = useMemo(() => [
-        {
-            id: 0,
-            word: "Bryan Bayoca",
-            identity: "Bryan Bayoca",
-            definition: "A fresh grad web developer who created this app.",
-        },
-        {
-            id: 1,
-            word: "WikiPok",
-            identity: "WikiPok",
-            definition: "A mobile responsive web app that acts as a personal library for words and definitions where users can add words with definitions and can get the definition of it or vice versa.",
-        }
-    ], []);
-
-    const [words, setWords] = useState(defaultWords);
+    const [words, setWords] = useState([]);
     const [currentID, setCurrentID] = useState("");
     const [currentWord, setCurrentWord] = useState("");
     const [currentDefinition, setCurrentDefinition] = useState("");
@@ -109,32 +94,15 @@ export default function TableFinalForm() {
         setCurrentDefinition("");
     }
 
-    useEffect(() => {
-        if (!currentAuth) {
-            setWords(defaultWords);
-        }
-    }, [currentAuth, defaultWords]);
-
     const deleteWord = async (id: string, name: string) => {
         const thatword = doc(db, path, id);
         await deleteDoc(thatword).then(() => { toast.success(`${Capitalize(name)} has been deleted.`) });
     }
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
+    const [visibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
 
 
-    // const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
-    //     new Set(INITIAL_VISIBLE_COLUMNS),
-    // );
-    const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
-
-    useEffect(() => {
-        if (currentAuth) {
-            setVisibleColumns(["word", "definition", "actions"]);
-        } else {
-            setVisibleColumns(["word", "definition"]);
-        }
-    }, [currentAuth]);
 
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
