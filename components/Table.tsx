@@ -65,7 +65,7 @@ export default function TableFinalForm() {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    const [words, setWords] = useState([]);
+    const [words, setWords] = useState<Word[]>([]);
     const [currentID, setCurrentID] = useState("");
     const [currentWord, setCurrentWord] = useState("");
     const [currentDefinition, setCurrentDefinition] = useState("");
@@ -75,8 +75,8 @@ export default function TableFinalForm() {
             const newWords: Word[] = value.docs.map((doc, i) => ({
                 id: i,
                 identity: doc.id,
-                word: doc.data().name || "", // Default empty string for safety
-                definition: doc.data().definition || "", // Default empty string for safety
+                word: doc.data().name, // Default empty string for safety
+                definition: doc.data().definition, // Default empty string for safety
             }));
             setWords(newWords);
         }
