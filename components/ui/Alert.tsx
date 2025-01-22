@@ -9,7 +9,7 @@ const Alert = () => {
     const isItDark = useThemeStore((state) => state.themeIsDark)
     return (
         <ToastContainer
-            position="bottom-left"
+            position="bottom-right"
             autoClose={1200}
             hideProgressBar={false}
             newestOnTop={false}
