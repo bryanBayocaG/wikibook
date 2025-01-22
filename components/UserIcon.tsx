@@ -13,7 +13,7 @@ export default function UserIcon() {
     const HandleSignOut = async () => {
         try {
             await signOut(auth).then(() => {
-                toast.success("Signed out successfully");
+                toast.success("Signed-out successfully");
             });
             currentOff()
 

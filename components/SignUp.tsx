@@ -40,7 +40,7 @@ export function SignupForm() {
             const userName = userCredential.user.displayName;
             const docref = doc(db, "Users", userId)
             await setDoc(docref, { name: userId }).then(() => {
-                toast.success("Login successfully");
+                toast.success("Signed-in successfully");
             })
             currentOn(userId, userImg, userEmail, userName)
         } catch (error) {
