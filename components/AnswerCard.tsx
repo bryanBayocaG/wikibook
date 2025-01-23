@@ -13,9 +13,9 @@ export const Capitalize = (definition: string) => {
 
 export default function AnswerCard({ word, definition, from }: Props) {
     return (
-        <Card className="w-full mt-10 ">
+        <Card className="w-full mt-10">
             <CardHeader className="flex gap-3">
-                <div className=" flex-col hidden    ">
+                <div className=" flex-col hidden">
                     <p className="text-md text-default-500">{from}</p>
                 </div>
                 <div className="flex gap-3">
