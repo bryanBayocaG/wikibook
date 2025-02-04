@@ -15,32 +15,23 @@ import { useTheme } from 'next-themes'
 import { SignupForm } from "../SignUp";
 import { CiUser } from "react-icons/ci";
 import { toast } from 'react-toastify';
-import { useAuthStore } from "@/app/store";
-import { addDoc, collection, getDocs, query, where } from "@firebase/firestore";
-import { db } from "@/utils/firebase";
+import { useAuthStore, useWordsStore } from "@/app/store";
 import { Capitalize } from "../AnswerCard";
-
-
 
 interface Props {
     name: string;
     id?: string;
     word?: string;
     definition?: string;
-    onEdit?: () => void;
-
 }
 
-
-
-export default function ModalButton({ name, onEdit }: Props) {
+export default function ModalButton({ name }: Props) {
     const wordRef = useRef<HTMLInputElement>(null)
     const definitionRef = useRef<HTMLTextAreaElement>(null)
     const { theme } = useTheme();
 
     const currentAuth = useAuthStore((state) => state.currentAuth)
     const currentAuthId = useAuthStore((state) => state.currentAuthId)
-    const path = `Users/${currentAuthId}/wordsAndDef`;
 
     const [currentUsage, setCurrentUsage] = useState("");
 
@@ -65,12 +56,8 @@ export default function ModalButton({ name, onEdit }: Props) {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const handleOpen = () => {
-        if (onEdit) {
-            onEdit();
-        }
         onOpen();
     };
-    //close modal pag nag login sa add word
     useEffect(() => {
         if (currentAuth) {
             onClose();
@@ -87,23 +74,34 @@ export default function ModalButton({ name, onEdit }: Props) {
                 toast.error("Please fill in both fields.");
                 return;
             }
-
-            const docRef = collection(db, path)
-            const querySnapshot = await getDocs(query(docRef, where("name", "==", wordValue)));
-            if (!querySnapshot.empty) {
-                toast.error(`The word "${wordValue}" already exists.`);
-                return;
+            const res = await fetch("/api", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${currentAuthId}`
+                },
+                body: JSON.stringify({
+                    name: wordValue,
+                    definition: definitionValue,
+                })
+            })
+            const data = await res.json();
+            if (!res.ok) {
+                if (data.error === "Word already exists") {
+                    toast.error("This word already exists. Please choose a different one.");
+                    return;
+                }
+                throw new Error(data.error || "An unexpected error occurred");
             }
-
-            await addDoc(docRef, {
-                definition: definitionValue,
+            useWordsStore.getState().addWord({
+                id: data.id,
                 name: wordValue,
-            }).then(() => {
-                toast.success(`Added ${Capitalize(wordValue)} successfully`);
-                onClose()
+                definition: definitionValue
             });
-
+            toast.success(`Added ${Capitalize(wordValue)} successfully`);
+            onClose();
         } catch (error) {
+            console.error("Error in submission:", error);
             if (typeof error === "string") {
                 toast.error(error);
             } else {

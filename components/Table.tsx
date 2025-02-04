@@ -25,11 +25,8 @@ import {
     Textarea,
 } from "@heroui/react";
 import ModalButton from "./ui/Modal";
-import { collection, deleteDoc, doc, updateDoc } from "@firebase/firestore";
-import { useCollection } from 'react-firebase-hooks/firestore';
-import { db } from "@/utils/firebase";
 import { SearchIcon, VerticalDotsIcon } from "./ui/TableSVG";
-import { useAuthStore } from "@/app/store";
+import { useAuthStore, useWordsStore } from "@/app/store";
 import { Capitalize } from "./AnswerCard";
 import { toast } from "react-toastify";
 
@@ -49,61 +46,98 @@ export const statusOptions = [
 ];
 
 type Word = {
-    id: number;
-    word: string;
+    id: string;
+    name: string;
     definition: string;
-    identity: string;
 };
 const INITIAL_VISIBLE_COLUMNS = ["word", "definition", "actions"];
 
 export default function TableFinalForm() {
     const currentAuth = useAuthStore((state) => state.currentAuth)
     const currentAuthId = useAuthStore((state) => state.currentAuthId)
-    const query = currentAuth ? collection(db, `Users/${currentAuthId}/wordsAndDef`) : null;
-    const path = `Users/${currentAuthId}/wordsAndDef`;
-    const [value,] = useCollection(query);
-
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const words = useWordsStore((state) => state.words);
+    const setWords = useWordsStore((state) => state.setWords);
 
-    const [words, setWords] = useState<Word[]>([]);
+    // const [words, setWords] = useState<Word[]>([]);
+
+
     const [currentID, setCurrentID] = useState("");
     const [currentWord, setCurrentWord] = useState("");
     const [currentDefinition, setCurrentDefinition] = useState("");
-
     useEffect(() => {
-        if (value) {
-            const newWords: Word[] = value.docs.map((doc, i) => ({
-                id: i,
-                identity: doc.id,
-                word: doc.data().name, // Default empty string for safety
-                definition: doc.data().definition, // Default empty string for safety
-            }));
-            setWords(newWords);
+        if (currentAuth) {
+            const getWord = async () => {
+                try {
+                    const response = await fetch("/api", {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${currentAuthId}`,
+                        }
+                    });
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.statusText}`);
+                    }
+                    const data = await response.json();
+                    useWordsStore.getState().setWords(data);
+                    setWords(data)
+                } catch (error) {
+                    console.error("Failed to fetch words:", error);
+                }
+            };
+            getWord()
+        } else {
+            useWordsStore.getState().clearWords();
         }
-    }, [value]);
-    useEffect(() => {
-        if (!currentAuth) {
-            setWords([])
-        }
+    }, [currentAuth, currentAuthId, setWords])
 
-    }, [currentAuth])
-
-    const wordRef = useRef<HTMLInputElement>(null)
-    const definitionRef = useRef<HTMLTextAreaElement>(null)
-
-    const editWord = async () => {
-        const thatword = doc(db, path, currentID);
-        await updateDoc(thatword, { name: currentWord, definition: currentDefinition })
-            .then(() => { toast.success(`${Capitalize(currentWord)} has been updated.`) });
-
-        setCurrentWord("")
-        setCurrentDefinition("");
-    }
+    console.log("zustand", words)
+    // console.log("usestate", words)
 
     const deleteWord = async (id: string, name: string) => {
-        const thatword = doc(db, path, id);
-        await deleteDoc(thatword).then(() => { toast.success(`${Capitalize(name)} has been deleted.`) });
-    }
+        try {
+            const response = await fetch("/api", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${currentAuthId}`,
+                },
+                body: JSON.stringify({ id }),
+            });
+
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error);
+            useWordsStore.getState().deleteWord(id);
+            toast.success(`${Capitalize(name)} has been deleted.`);
+        } catch (error) {
+            toast.error("Failed to delete the word. " + error);
+        }
+    };
+    const editWord = async () => {
+        try {
+            const response = await fetch("/api", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${currentAuthId}`,
+                },
+                body: JSON.stringify({ id: currentID, name: currentWord, definition: currentDefinition }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) throw new Error(data.error);
+            useWordsStore.getState().updateWord({ id: currentID, name: currentWord, definition: currentDefinition });
+
+            toast.success(`${Capitalize(currentWord)} has been updated.`);
+            setCurrentWord("");
+            setCurrentDefinition("");
+        } catch (error) {
+            toast.error("Failed to update the word. " + error);
+        }
+    };
+    const wordRef = useRef<HTMLInputElement>(null)
+    const definitionRef = useRef<HTMLTextAreaElement>(null)
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
     const [visibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -121,7 +155,6 @@ export default function TableFinalForm() {
     const hasSearchFilter = Boolean(filterValue);
 
     const headerColumns = React.useMemo(() => {
-        // if (visibleColumns === "all") return columns;
 
         return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
     }, [visibleColumns]);
@@ -130,8 +163,8 @@ export default function TableFinalForm() {
         let filteredUsers = words || [];
 
         if (hasSearchFilter) {
-            filteredUsers = filteredUsers.filter((word) =>
-                word.word.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredUsers = filteredUsers.filter((name) =>
+                name.name.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
         return filteredUsers;
@@ -148,9 +181,13 @@ export default function TableFinalForm() {
 
     const sortedItems = React.useMemo(() => {
         return [...items].sort((a: Word, b: Word) => {
-            const first = a[sortDescriptor.column as keyof Word] as number;
-            const second = b[sortDescriptor.column as keyof Word] as number;
-            const cmp = first < second ? -1 : first > second ? 1 : 0;
+            const first = a[sortDescriptor.column as keyof Word];
+            const second = b[sortDescriptor.column as keyof Word];
+
+            const firstValue = typeof first === "string" ? first.toLowerCase() : "";
+            const secondValue = typeof second === "string" ? second.toLowerCase() : "";
+
+            const cmp = firstValue.localeCompare(secondValue);
 
             return sortDescriptor.direction === "descending" ? -cmp : cmp;
         });
@@ -163,7 +200,7 @@ export default function TableFinalForm() {
             case "word":
                 return (
                     <div className="flex justify-start">
-                        <p className="uppercase">{word.word}</p>
+                        <p className="uppercase">{word.name}</p>
                     </div>
                 );
             case "definition":
@@ -188,14 +225,14 @@ export default function TableFinalForm() {
                                     <DropdownItem key="edit"
                                         onPress={() => {
                                             onOpen();
-                                            setCurrentID(word.identity);
-                                            setCurrentWord(word.word);
+                                            setCurrentID(word.id);
+                                            setCurrentWord(word.name);
                                             setCurrentDefinition(word.definition);
                                         }}
                                     >
                                         Edit
                                     </DropdownItem>
-                                    <DropdownItem key="delete" onPress={() => (deleteWord(word.identity, word.word))}>
+                                    <DropdownItem key="delete" onPress={() => (deleteWord(word.id, word.name))}>
                                         Delete
                                     </DropdownItem>
                                 </DropdownMenu>
@@ -208,7 +245,7 @@ export default function TableFinalForm() {
             default:
                 return cellValue;
         }
-    }, []);
+    }, [currentAuth, deleteWord, onOpen]);
 
     const onNextPage = React.useCallback(() => {
         if (page < pages) {
@@ -323,8 +360,6 @@ export default function TableFinalForm() {
                 classNames={{
                     wrapper: "max-h-[382px]",
                 }}
-                // selectedKeys={selectedKeys}
-                // selectionMode="multiple"
                 sortDescriptor={sortDescriptor}
                 topContent={topContent}
                 topContentPlacement="outside"

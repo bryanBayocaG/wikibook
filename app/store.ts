@@ -22,6 +22,21 @@ type AuthStore = {
   ) => void;
 };
 
+type Word = {
+  id: string;
+  name: string;
+  definition: string;
+};
+
+type WordsState = {
+  words: Word[];
+  setWords: (words: Word[]) => void;
+  addWord: (newWord: Word) => void;
+  updateWord: (updatedWord: Word) => void;
+  deleteWord: (id: string) => void;
+  clearWords: () => void;
+};
+
 export const useThemeStore = create<
   ThemeStore,
   [["zustand/persist", ThemeStore]]
@@ -38,6 +53,36 @@ export const useThemeStore = create<
     }),
     {
       name: "theme-store",
+    }
+  )
+);
+
+export const useWordsStore = create<
+  WordsState,
+  [["zustand/persist", WordsState]]
+>(
+  persist(
+    (set) => ({
+      words: [],
+      setWords: (words) => set({ words }),
+      addWord: (newWord) =>
+        set((state) => ({
+          words: [...state.words, newWord],
+        })),
+      updateWord: (updatedWord) =>
+        set((state) => ({
+          words: state.words.map((word) =>
+            word.id === updatedWord.id ? updatedWord : word
+          ),
+        })),
+      deleteWord: (id) =>
+        set((state) => ({
+          words: state.words.filter((word) => word.id !== id),
+        })),
+      clearWords: () => set({ words: [] }),
+    }),
+    {
+      name: "words-store",
     }
   )
 );

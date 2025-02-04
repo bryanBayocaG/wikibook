@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WikiPok",
-  description: "Personla Library",
+  title: "Wikibook",
+  description: "Personal Library",
 };
 
 export default function RootLayout({
@@ -38,7 +38,6 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
-
       </body>
     </html>
   );
