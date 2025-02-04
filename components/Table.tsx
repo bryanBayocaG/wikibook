@@ -91,7 +91,7 @@ export default function TableFinalForm() {
         }
     }, [currentAuth, currentAuthId, setWords])
 
-    console.log("zustand", words)
+    // console.log("zustand", words)
     // console.log("usestate", words)
 
     const deleteWord = async (id: string, name: string) => {
