@@ -29,6 +29,7 @@ import { SearchIcon, VerticalDotsIcon } from "./ui/TableSVG";
 import { useAuthStore, useWordsStore } from "@/app/store";
 import { Capitalize } from "./AnswerCard";
 import { toast } from "react-toastify";
+import { ThreeDot } from "react-loading-indicators";
 
 export function capitalize(s: string) {
     return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
@@ -59,15 +60,14 @@ export default function TableFinalForm() {
     const words = useWordsStore((state) => state.words);
     const setWords = useWordsStore((state) => state.setWords);
 
-    // const [words, setWords] = useState<Word[]>([]);
-
-
     const [currentID, setCurrentID] = useState("");
     const [currentWord, setCurrentWord] = useState("");
     const [currentDefinition, setCurrentDefinition] = useState("");
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         if (currentAuth) {
             const getWord = async () => {
+                setLoading(true);
                 try {
                     const response = await fetch("/api", {
                         method: "GET",
@@ -83,11 +83,14 @@ export default function TableFinalForm() {
                     setWords(data)
                 } catch (error) {
                     console.error("Failed to fetch words:", error);
+                } finally {
+                    setLoading(false);
                 }
             };
             getWord()
         } else {
             useWordsStore.getState().clearWords();
+            setLoading(false);
         }
     }, [currentAuth, currentAuthId, setWords])
 
@@ -348,40 +351,47 @@ export default function TableFinalForm() {
 
     return (
         <>
-            <Table
+            {loading ?
+                <div className="h-full flex items-center justify-center">
+                    <ThreeDot variant="pulsate" color="#ca8a04" size="medium" text="" textColor="" />
+                </div>
+                :
+                <Table
 
-                isHeaderSticky
-                aria-label="Example table with custom cells, pagination and sorting"
-                bottomContent={bottomContent}
-                bottomContentPlacement="outside"
-                classNames={{
-                    wrapper: "max-h-[382px]",
-                }}
-                sortDescriptor={sortDescriptor}
-                topContent={topContent}
-                topContentPlacement="outside"
-                onSelectionChange={setSelectedKeys}
-                onSortChange={setSortDescriptor}
-            >
-                <TableHeader columns={headerColumns}>
-                    {(column) => (
-                        <TableColumn
-                            key={column.uid}
-                            align={column.uid === "actions" ? "center" : "start"}
-                            allowsSorting={column.sortable}
-                        >
-                            {column.name}
-                        </TableColumn>
-                    )}
-                </TableHeader>
-                <TableBody emptyContent={"No words found"} items={sortedItems}>
-                    {(item) => (
-                        <TableRow key={item.id}>
-                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
+                    isHeaderSticky
+                    aria-label="Example table with custom cells, pagination and sorting"
+                    bottomContent={bottomContent}
+                    bottomContentPlacement="outside"
+                    classNames={{
+                        wrapper: "max-h-[382px]",
+                    }}
+                    sortDescriptor={sortDescriptor}
+                    topContent={topContent}
+                    topContentPlacement="outside"
+                    onSelectionChange={setSelectedKeys}
+                    onSortChange={setSortDescriptor}
+                >
+                    <TableHeader columns={headerColumns}>
+                        {(column) => (
+                            <TableColumn
+                                key={column.uid}
+                                align={column.uid === "actions" ? "center" : "start"}
+                                allowsSorting={column.sortable}
+                            >
+                                {column.name}
+                            </TableColumn>
+                        )}
+                    </TableHeader>
+                    <TableBody emptyContent={"No words found"} items={sortedItems}>
+                        {(item) => (
+                            <TableRow key={item.id}>
+                                {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            }
+
 
             <Modal isOpen={isOpen} isDismissable={false} onOpenChange={onOpenChange}>
                 <ModalContent>

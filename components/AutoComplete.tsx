@@ -35,19 +35,8 @@ export default function AutoComplete() {
     const [results, setResults] = useState<ResultItem[]>([]);
     const [error, setError] = useState("");
 
-    const [words, setWords] = useState<Word[]>([
-        { label: "Bryan Bayoca", key: 1, description: "A fresh grad web developer who created this app.", from: "default" },
-        { label: "WikiPok", key: 2, description: "A mobile responsive web app that acts as a personal library for words and deifinition where user can add words with definition and can get the definition of it or vise versa.", from: "default" },
-
-
-    ]);
-
-    const [decription, setDecription] = useState<Word[]>([
-        { label: "A fresh grad web developer who created this app.", key: 4, description: "Bryan Bayoca", from: "default" },
-        { label: "A mobile responsive web app that acts as a personal library for words and deifinition where user can add words with definition and can get the definition of it or vise versa.", key: 5, description: "Wikipok", from: "default" },
-
-
-    ]);
+    const [words, setWords] = useState<Word[]>([]);
+    const [decription, setDecription] = useState<Word[]>([]);
 
     useEffect(() => {
         if (value) {

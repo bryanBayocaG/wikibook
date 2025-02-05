@@ -55,7 +55,7 @@ export function SignupForm() {
             </h2>
             <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
 
-                {`${!noAcc ? "Create account" : "Login"} to add your own words and definitions.`}
+                <span className="text-yellow-600">{`${!noAcc ? "Create account" : "Login"} `}</span> to add your own words and definitions.
             </p>
 
             {/* <form className="my-8" onSubmit={handleSubmit}>
