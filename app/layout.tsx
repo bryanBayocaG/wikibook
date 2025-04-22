@@ -7,7 +7,7 @@ import Alert from "@/components/ui/Alert";
 // import 'react-toastify/dist/ReactToastify.css';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-gei st-sans",
   subsets: ["latin"],
 });
 
